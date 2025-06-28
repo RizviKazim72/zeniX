@@ -1,0 +1,93 @@
+@import "tailwindcss";
+@import "./theme.css";
+@import "./typography.css";
+@import "./animations.css";
+
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #000000;
+    --foreground: #ffffff;
+  }
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Toast Styles */
+.toast-container .Toastify__toast {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border: 1px solid rgba(229, 9, 20, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  font-family: var(--font-heading);
+  color: #ffffff;
+  backdrop-filter: blur(10px);
+  transform: scale(0.95);
+  animation: toastSlideIn 0.3s ease-out forwards;
+}
+
+.toast-container .Toastify__toast--success {
+  border-color: rgba(34, 197, 94, 0.4);
+  background: linear-gradient(135deg, #1a1a1a 0%, #1f2937 100%);
+}
+
+.toast-container .Toastify__toast--error {
+  border-color: rgba(229, 9, 20, 0.4);
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d1b1b 100%);
+}
+
+.toast-container .Toastify__toast--warning {
+  border-color: rgba(245, 158, 11, 0.4);
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2518 100%);
+}
+
+.toast-container .Toastify__toast--info {
+  border-color: rgba(59, 130, 246, 0.4);
+  background: linear-gradient(135deg, #1a1a1a 0%, #1e2a3a 100%);
+}
+
+.toast-container .Toastify__progress-bar {
+  background: linear-gradient(90deg, #e50914 0%, #f40612 100%);
+  height: 3px;
+  border-radius: 0 0 12px 12px;
+}
+
+.toast-container .Toastify__close-button {
+  color: #ffffff;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.toast-container .Toastify__close-button:hover {
+  opacity: 1;
+}
+
+@keyframes toastSlideIn {
+  from {
+    transform: translateX(100%) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}

@@ -43,7 +43,6 @@ export const genreBasedMovies: GenreSliderConfig[] = [
   { id: "history", title: "History", genreId: GENRE_CONFIG.MOVIE_GENRES.HISTORY, cardWidth: "w-[200px]" },
   { id: "horror", title: "Horror", genreId: GENRE_CONFIG.MOVIE_GENRES.HORROR, cardWidth: "w-[200px]" },
   { id: "mystery", title: "Mystery", genreId: GENRE_CONFIG.MOVIE_GENRES.MYSTERY, cardWidth: "w-[200px]" },
-  { id: "romance", title: "Romance", genreId: GENRE_CONFIG.MOVIE_GENRES.ROMANCE, cardWidth: "w-[200px]" },
   { id: "sci-fi", title: "Science Fiction", genreId: GENRE_CONFIG.MOVIE_GENRES.SCIENCE_FICTION, cardWidth: "w-[200px]" },
   { id: "thriller", title: "Thriller", genreId: GENRE_CONFIG.MOVIE_GENRES.THRILLER, cardWidth: "w-[200px]" },
   { id: "war", title: "War", genreId: GENRE_CONFIG.MOVIE_GENRES.WAR, cardWidth: "w-[200px]" },
@@ -168,7 +167,7 @@ export const homeSliders: GeneralSliderConfig[] = [
 export const trendingSliders: GeneralSliderConfig[] = [
   {
     id: "trending-today",
-    title: "🔥 Trending Today",
+    title: "Trending Today",
     endpoint: "/trending/all/day",
     category: "trending-today",
     autoScroll: true,
@@ -177,7 +176,7 @@ export const trendingSliders: GeneralSliderConfig[] = [
   },
   {
     id: "trending-week",
-    title: "📈 This Week's Hottest",
+    title: "This Week's Hottest",
     endpoint: "/trending/all/week",
     category: "trending-week",
     autoScroll: true,
@@ -186,7 +185,7 @@ export const trendingSliders: GeneralSliderConfig[] = [
   },
   {
     id: "trending-movies",
-    title: "🎬 Trending Movies",
+    title: "Trending Movies",
     endpoint: "/trending/movie/week",
     category: "trending-movies",
     autoScroll: true,
@@ -195,7 +194,7 @@ export const trendingSliders: GeneralSliderConfig[] = [
   },
   {
     id: "trending-tv",
-    title: "📺 Trending TV Shows",
+    title: "Trending TV Shows",
     endpoint: "/trending/tv/week",
     category: "trending-tv",
     autoScroll: true,

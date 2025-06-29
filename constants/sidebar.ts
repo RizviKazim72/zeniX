@@ -1,10 +1,11 @@
 import {
-  Earth,
+  Home,
   Film,
   Tv,
-  TrendingUp,
-  SearchIcon,
-  Grid3X3,
+  Flame,
+  Search,
+  LayoutGrid,
+  User,
 } from "lucide-react";
 
 export const MainSideBarLinks = [
@@ -12,13 +13,13 @@ export const MainSideBarLinks = [
     id: 1,
     name: "Browse",
     path: "/",
-    icon: Earth,
+    icon: Home,
   },
     {
     id:2,
     name: "Search",
     path: "/search",
-    icon: SearchIcon,
+    icon: Search,
   },
   {
     id: 3,
@@ -36,19 +37,19 @@ export const MainSideBarLinks = [
     id: 5,
     name: "Genres",
     path: "/genres",
-    icon: Grid3X3,
+    icon: LayoutGrid,
   },
   {
     id: 6,
     name: "Trending",
     path: "/trending",
-    icon: TrendingUp,
+    icon: Flame,
   },
   {
     id: 7,
     name: "My Space",
     path: "/myspace",
-    icon: Earth,
+    icon: User,
   },
 
 ];

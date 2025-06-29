@@ -1,3 +1,5 @@
+import { Loader2 } from 'lucide-react';
+
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
@@ -17,15 +19,15 @@ export default function LoadingSpinner({
   };
 
   const colorClasses = {
-    netflix: 'border-gray-700 border-t-netflix-red',
-    blue: 'border-gray-300 border-t-blue-600',
-    white: 'border-gray-600 border-t-white'
+    netflix: 'text-netflix-red',
+    blue: 'text-blue-600',
+    white: 'text-white'
   };
 
   return (
     <div className={`flex items-center justify-center ${className}`}>
-      <div
-        className={`${sizeClasses[size]} ${colorClasses[color]} animate-spin rounded-full border-2`}
+      <Loader2 
+        className={`${sizeClasses[size]} ${colorClasses[color]} animate-spin`}
       />
     </div>
   );
@@ -33,7 +35,7 @@ export default function LoadingSpinner({
 
 export function LoadingCard() {
   return (
-    <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-lg overflow-hidden animate-pulse">
+    <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-lg overflow-hidden animate-pulse relative z-999">
       <div className="aspect-[2/3] bg-gray-800/50 skeleton"></div>
       <div className="p-4 space-y-2">
         <div className="h-4 bg-gray-700/50 rounded skeleton"></div>

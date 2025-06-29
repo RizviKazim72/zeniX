@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Star, ThumbsUp, ThumbsDown, MoreHorizontal } from 'lucide-react';
+import { Star, ThumbsUp, ThumbsDown, MoreVertical } from 'lucide-react';
 import UserAvatar from './UserAvatar';
 
 interface Review {
@@ -73,7 +73,7 @@ export default function ReviewCard({ review, onLike, onDislike, onReport }: Revi
         </div>
         
         <button className="text-gray-400 hover:text-white transition-colors">
-          <MoreHorizontal size={20} />
+          <MoreVertical size={20} />
         </button>
       </div>
 

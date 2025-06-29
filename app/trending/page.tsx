@@ -36,7 +36,7 @@ export default function TrendingPage() {
 
       {/* Popular and Top Rated Content */}
       <Slider
-        title="⭐ Popular Movies"
+        title="Popular Movies"
         endpoint="/movie/popular"
         cardWidth="w-[200px]"
         type="movie"
@@ -44,7 +44,7 @@ export default function TrendingPage() {
       />
 
       <Slider
-        title="📺 Popular TV Shows"
+        title="Popular TV Shows"
         endpoint="/tv/popular"
         cardWidth="w-[200px]"
         type="tv"
@@ -52,7 +52,7 @@ export default function TrendingPage() {
       />
 
       <Slider
-        title="🏆 Top Rated Movies"
+        title="Top Rated Movies"
         endpoint="/movie/top_rated"
         cardWidth="w-[200px]"
         type="movie"
@@ -60,7 +60,7 @@ export default function TrendingPage() {
       />
 
       <Slider
-        title="🏆 Top Rated TV Shows"
+        title="Top Rated TV Shows"
         endpoint="/tv/top_rated"
         cardWidth="w-[200px]"
         type="tv"

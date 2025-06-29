@@ -82,6 +82,19 @@ const SearchPage: React.FC = () => {
   }, []);
 
   /**
+   * Handle initial search query from URL params
+   */
+  useEffect(() => {
+    if (query && query.trim() !== "") {
+      setSearchQuery(query);
+      // Small delay to ensure state is updated
+      setTimeout(() => {
+        fetchResults();
+      }, 100);
+    }
+  }, [query]); // Only run when the URL query changes
+
+  /**
    * Fetch search results based on current query and filters
    */
   const fetchResults = useCallback(async () => {
@@ -117,12 +130,17 @@ const SearchPage: React.FC = () => {
   }, [searchQuery, currentPage, filters, isSearching]);
 
   /**
-   * Debounced search effect
+   * Debounced search effect - handles both user input and initial URL query
    */
   useEffect(() => {
-    const timeout = setTimeout(fetchResults, 300);
-    return () => clearTimeout(timeout);
-  }, [fetchResults]);
+    if (searchQuery.trim()) {
+      const timeout = setTimeout(fetchResults, 300);
+      return () => clearTimeout(timeout);
+    } else {
+      // Clear results when search query is empty
+      setResults([]);
+    }
+  }, [fetchResults, searchQuery]);
 
   /**
    * Handle search input key events

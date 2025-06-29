@@ -31,7 +31,7 @@ const TrendingItem: React.FC<TrendingItemProps> = ({ item, onClick, index }) => 
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.1 }}
-      whileHover={{ scale: 1.02, x: 4 }}
+      // whileHover={{ scale: 1.02, x: 4 }}
       onClick={() => onClick(title)}
       className="flex items-center space-x-4 p-4 glass-card hover:glass-card-hover rounded-xl cursor-pointer transition-all duration-300 group border border-glass-border/10 hover:border-netflix-red/30"
     >

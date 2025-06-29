@@ -13,8 +13,6 @@ interface UseMediaDataReturn<T> {
   loading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
-  hasMore: boolean;
-  loadMore: () => Promise<void>;
 }
 
 interface UseMediaListReturn<T> {
@@ -22,10 +20,6 @@ interface UseMediaListReturn<T> {
   loading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
-  hasMore: boolean;
-  loadMore: () => Promise<void>;
-  page: number;
-  totalPages: number;
 }
 
 // Cache type
@@ -127,14 +121,12 @@ export const useMediaDetails = (
     data,
     loading,
     error,
-    refetch: fetchData,
-    hasMore: false,
-    loadMore: async () => {}
+    refetch: fetchData
   };
 };
 
 /**
- * Hook for fetching media lists with pagination
+ * Hook for fetching media lists (simplified without pagination)
  */
 export const useMediaList = <T extends Movie | TVShow>(
   fetchFunction: (page: number) => Promise<ApiResponse<T>>,
@@ -143,12 +135,9 @@ export const useMediaList = <T extends Movie | TVShow>(
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
   const abortController = useRef<AbortController | null>(null);
 
-  const fetchData = useCallback(async (pageNum: number = 1, append: boolean = false) => {
+  const fetchData = useCallback(async () => {
     // Cancel previous request
     if (abortController.current) {
       abortController.current.abort();
@@ -156,18 +145,11 @@ export const useMediaList = <T extends Movie | TVShow>(
     abortController.current = new AbortController();
 
     setLoading(true);
-    if (!append) {
-      setError(null);
-    }
+    setError(null);
 
     try {
-      const result = await fetchFunction(pageNum);
-      
-      setData(prev => append ? [...prev, ...result.results] : result.results);
-      const totalPages = result.total_pages || 0;
-      setTotalPages(totalPages);
-      setPage(pageNum);
-      setHasMore(pageNum < totalPages);
+      const result = await fetchFunction(1);
+      setData(result.results);
     } catch (err) {
       if (err instanceof Error && err.name !== 'AbortError') {
         setError(err.message);
@@ -177,18 +159,12 @@ export const useMediaList = <T extends Movie | TVShow>(
     }
   }, [fetchFunction]);
 
-  const loadMore = useCallback(async () => {
-    if (!hasMore || loading) return;
-    await fetchData(page + 1, true);
-  }, [fetchData, hasMore, loading, page]);
-
   const refetch = useCallback(async () => {
-    setPage(1);
-    await fetchData(1, false);
+    await fetchData();
   }, [fetchData]);
 
   useEffect(() => {
-    fetchData(1, false);
+    fetchData();
     
     return () => {
       if (abortController.current) {
@@ -201,11 +177,7 @@ export const useMediaList = <T extends Movie | TVShow>(
     data,
     loading,
     error,
-    refetch,
-    hasMore,
-    loadMore,
-    page,
-    totalPages
+    refetch
   };
 };
 

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  User, 
+  UserRound, 
   Mail, 
   Calendar,
   MapPin,
@@ -11,7 +11,7 @@ import {
   Save,
   X,
   Camera,
-  Lock
+  Shield
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
@@ -261,7 +261,7 @@ export default function ProfilePage() {
                       </span>
                     </div>
                     <div className="flex items-center space-x-2 text-sm">
-                      <Lock size={16} className="text-gray-400" />
+                      <Shield size={16} className="text-gray-400" />
                       <span className="text-white capitalize">{user.subscription.type} Plan</span>
                     </div>
                   </div>
@@ -408,10 +408,10 @@ export default function ProfilePage() {
                               key={genre}
                               type="button"
                               onClick={() => handleGenreToggle(genre)}
-                              className={`px-3 py-2 text-sm rounded-lg transition-colors ${
+                              className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
                                 formData.favoriteGenres.includes(genre)
-                                  ? 'bg-netflix-red text-white'
-                                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                                  ? 'border-netflix-red text-white bg-netflix-red/10'
+                                  : 'border-gray-600 text-gray-300 hover:border-gray-500 hover:bg-gray-700/50'
                               }`}
                             >
                               {genre}
@@ -424,7 +424,7 @@ export default function ProfilePage() {
                             user.preferences.favoriteGenres.map((genre) => (
                               <span
                                 key={genre}
-                                className="px-3 py-1 bg-netflix-red/20 text-netflix-red rounded-full text-sm"
+                                className="px-3 py-1 border border-netflix-red text-white rounded-full text-sm"
                               >
                                 {genre}
                               </span>

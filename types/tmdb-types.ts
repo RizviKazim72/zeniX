@@ -411,10 +411,6 @@ export interface UseMediaListReturn<T> {
   loading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
-  hasMore: boolean;
-  loadMore: () => Promise<void>;
-  page: number;
-  totalPages: number;
 }
 
 export interface MediaPageData {
@@ -482,8 +478,6 @@ export interface MediaGridProps {
   loading?: boolean;
   error?: string | null;
   onItemClick?: (item: Movie | TVShow) => void;
-  onLoadMore?: () => void;
-  hasMore?: boolean;
   className?: string;
 }
 

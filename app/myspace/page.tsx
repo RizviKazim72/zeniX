@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { 
-  User, 
+  UserRound, 
   Heart, 
   Bookmark, 
   Clock, 
@@ -11,12 +12,11 @@ import {
   Calendar,
   MapPin,
   Mail,
-  Camera,
   Edit,
-  Plus,
   Trash2,
-  Grid,
-  List
+  Film,
+  Tv,
+  Eye
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
@@ -27,7 +27,56 @@ import NavBar from '@/components/common/NavBar';
 import Footer from '@/components/common/Footer';
 import Button from '@/components/ui/Button';
 import ZeniXLoader from '@/components/ui/ZeniXLoader';
-import ScrollAnimationWrapper from '@/components/ui/ScrollAnimationWrapper';
+
+/**
+ * Tab types for MySpace page
+ */
+type TabType = 'overview' | 'favorites' | 'watchlist' | 'recent';
+
+/**
+ * Tab navigation component styled like movie details page
+ */
+const TabNavigation: React.FC<{
+  activeTab: TabType;
+  onTabChange: (tab: TabType) => void;
+  counts: {
+    favorites: number;
+    watchlist: number;
+    recent: number;
+  };
+}> = ({ activeTab, onTabChange, counts }) => {
+  const tabs = [
+    { id: "overview" as TabType, label: "Overview", icon: Eye },
+    { id: "favorites" as TabType, label: `Favorites (${counts.favorites})`, icon: Heart },
+    { id: "watchlist" as TabType, label: `Watchlist (${counts.watchlist})`, icon: Bookmark },
+    { id: "recent" as TabType, label: `Recent (${counts.recent})`, icon: Clock },
+  ];
+
+  return (
+    <div className="border-b border-white/10">
+      <div className="flex overflow-x-auto no-scrollbar">
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => onTabChange(tab.id)}
+              className={`flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-4 text-sm font-medium whitespace-nowrap transition-all duration-300 cursor-pointer hover:scale-105 ${
+                activeTab === tab.id
+                  ? "text-red-500 border-b-2 border-red-500 bg-red-500/5"
+                  : "text-gray-400 hover:text-white hover:bg-white/5"
+              }`}
+            >
+              <Icon className="w-4 h-4" />
+              <span className="hidden sm:inline">{tab.label}</span>
+              <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 /**
  * MySpace - Personal dashboard for user content management
@@ -36,17 +85,22 @@ import ScrollAnimationWrapper from '@/components/ui/ScrollAnimationWrapper';
 export default function MySpacePage() {
   const { user, isAuthenticated, loading } = useAuth();
   const { info, success } = useToast();
-  const [activeTab, setActiveTab] = useState('overview');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<TabType>('overview');
 
   // Handle URL tab parameters
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tab = urlParams.get('tab');
     if (tab && ['overview', 'favorites', 'watchlist', 'recent'].includes(tab)) {
-      setActiveTab(tab);
+      setActiveTab(tab as TabType);
     }
   }, []);
+
+  // Redirect to profile page for editing
+  const handleEditProfile = () => {
+    router.push('/profile');
+  };
 
   // Initialize media lists
   const favorites = useMediaList('favorites');
@@ -67,24 +121,17 @@ export default function MySpacePage() {
     return null;
   }
 
-  const tabs = [
-    { id: 'overview', label: 'Overview', icon: User },
-    { id: 'favorites', label: 'Favorites', icon: Heart },
-    { id: 'watchlist', label: 'Watchlist', icon: Bookmark },
-    { id: 'recent', label: 'Recent Watches', icon: Clock },
-  ];
-
   // Calculate dynamic stats
   const stats = [
     { 
       label: 'Movies Watched', 
       value: (recentWatches.items || []).filter(w => w.mediaType === 'movie').length.toString(), 
-      icon: Star 
+      icon: Film 
     },
     { 
       label: 'TV Shows', 
       value: (recentWatches.items || []).filter(w => w.mediaType === 'tv').length.toString(), 
-      icon: Star 
+      icon: Tv 
     },
     { 
       label: 'Hours Watched', 
@@ -98,441 +145,415 @@ export default function MySpacePage() {
     },
   ];
 
+  const counts = {
+    favorites: favorites.count || 0,
+    watchlist: watchlist.count || 0,
+    recent: recentWatches.count || 0,
+  };
+
   const handleClearRecentWatches = async () => {
     if (window.confirm('Are you sure you want to clear all recent watches?')) {
       await recentWatches.clearAll();
     }
   };
 
-  const addSampleData = async () => {
-    const sampleMovies = [
-      { mediaId: 550, mediaType: 'movie' as const, title: 'Fight Club', posterPath: '/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg' },
-      { mediaId: 13, mediaType: 'movie' as const, title: 'Forrest Gump', posterPath: '/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg' },
-      { mediaId: 1399, mediaType: 'tv' as const, title: 'Game of Thrones', posterPath: '/1XS1oqL89opfnbLl8WnZY1O1uJx.jpg' },
-      { mediaId: 155, mediaType: 'movie' as const, title: 'The Dark Knight', posterPath: '/qJ2tW6WMUDux911r6m7haRef0WH.jpg' },
-      { mediaId: 1396, mediaType: 'tv' as const, title: 'Breaking Bad', posterPath: '/3xnWaLQjelJDDF7LT1WBo6f4BRe.jpg' },
-      { mediaId: 508442, mediaType: 'movie' as const, title: 'Soul', posterPath: '/hm58Jw4Lw8OIeECIq5qyPYhAeRJ.jpg' },
-    ];
-
-    // Add different items to different lists for better demo
-    switch (activeTab) {
-      case 'favorites':
-        for (const movie of sampleMovies.slice(0, 3)) {
-          await favorites.addItem(movie);
-        }
-        success('Sample favorites added!');
-        break;
-      case 'watchlist':
-        for (const movie of sampleMovies.slice(2, 5)) {
-          await watchlist.addItem(movie);
-        }
-        success('Sample watchlist items added!');
-        break;
-      case 'recent':
-        for (const movie of sampleMovies.slice(1, 4)) {
-          await recentWatches.addItem(movie);
-        }
-        success('Sample recent watches added!');
-        break;
-      default:
-        // Add to all lists
-        for (const movie of sampleMovies) {
-          await favorites.addItem(movie);
-          await watchlist.addItem(movie);
-          await recentWatches.addItem(movie);
-        }
-        success('Sample data added to all lists!');
+  const renderMediaGrid = (items: any[], emptyMessage: string, emptyIcon: React.ReactNode) => {
+    if (!items || items.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center py-16 space-y-4">
+          <div className="w-16 h-16 rounded-full bg-bg-card border border-glass-border flex items-center justify-center">
+            {emptyIcon}
+          </div>
+          <p className="text-text-muted text-center">{emptyMessage}</p>
+        </div>
+      );
     }
+
+    // Only list view - removed grid view
+    return (
+      <div className="space-y-4">
+        {items.map((item, index) => (
+          <motion.div
+            key={`${item.mediaId}-${item.mediaType}`}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.05, duration: 0.3 }}
+            className="glass-card p-4 flex items-center gap-4 hover:shadow-netflix/20 hover:border-netflix-red/20 transition-all duration-300"
+          >
+            <div className="w-16 h-24 flex-shrink-0 bg-bg-tertiary border border-glass-border rounded-lg overflow-hidden">
+              {item.posterPath ? (
+                <img
+                  src={`https://image.tmdb.org/t/p/w154${item.posterPath}`}
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  {item.mediaType === 'movie' ? (
+                    <Film className="w-6 h-6 text-text-disabled" />
+                  ) : (
+                    <Tv className="w-6 h-6 text-text-disabled" />
+                  )}
+                </div>
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="text-text-primary font-semibold truncate">{item.title}</h4>
+              <p className="text-text-muted text-sm capitalize">{item.mediaType}</p>
+              {item.addedAt && (
+                <p className="text-text-disabled text-xs">
+                  Added {new Date(item.addedAt).toLocaleDateString()}
+                </p>
+              )}
+            </div>
+            <button
+              onClick={() => {
+                if (activeTab === 'favorites') {
+                  favorites.removeItem(item.mediaId, item.mediaType);
+                } else if (activeTab === 'watchlist') {
+                  watchlist.removeItem(item.mediaId, item.mediaType);
+                } else if (activeTab === 'recent') {
+                  recentWatches.removeItem(item.mediaId, item.mediaType);
+                }
+              }}
+              className="p-2 text-text-muted hover:text-red-400 transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </motion.div>
+        ))}
+      </div>
+    );
   };
 
   return (
-    <div className="min-h-screen bg-bg-primary font-netflix">
+    <div className="relative bg-bg-primary text-text-primary min-h-screen overflow-hidden font-netflix">
       <NavBar />
       
-      <main className="pt-16">
-        {/* Hero Section */}
-        <ScrollAnimationWrapper>
-          <div className="relative h-64 sm:h-72 md:h-80 bg-gradient-to-r from-netflix-red/20 to-blue-600/20">
-            <div className="absolute inset-0 bg-black/40"></div>
-            <div className="relative z-10 container mx-auto px-4 h-full flex items-end pb-6 sm:pb-8">
-              <div className="flex flex-col sm:flex-row items-start sm:items-end space-y-4 sm:space-y-0 sm:space-x-6 w-full">
-                <div className="relative flex-shrink-0">
-                  <UserAvatar user={user} size="xl" className="ring-4 ring-white/20" />
-                  <button className="absolute bottom-0 right-0 p-2 bg-netflix-red rounded-full hover:bg-netflix-red-dark transition-colors cursor-pointer">
-                    <Camera size={16} className="text-white" />
-                  </button>
+      {/* Hero Section */}
+      <section className="relative h-screen overflow-hidden">
+        {/* Background with gradients */}
+        <div className="absolute inset-0 bg-gradient-to-br from-netflix-red/10 via-purple-600/10 to-blue-600/10">
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-black/90" />
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 h-full flex items-center pt-5 md:pt-16 lg:pt-0">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-12">
+              {/* Profile Image */}
+              <motion.div 
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
+                className="flex-shrink-0 text-center lg:text-left"
+              >
+              </motion.div>
+              
+              {/* Profile Information */}
+              <motion.div 
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="flex-1 space-y-4 sm:space-y-6 md:space-y-8 text-center lg:text-left"
+              >
+                {/* Title */}
+                <div className="space-y-2 sm:space-y-3 md:space-y-4">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white drop-shadow-lg leading-tight">
+                    {user.fullName}
+                  </h1>
+                  <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 italic font-light max-w-3xl mx-auto lg:mx-0">
+                    "Movie Enthusiast"
+                  </p>
                 </div>
-                
-                <div className="text-white flex-1">
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{user.fullName}</h1>
-                  <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 text-sm text-gray-300">
-                    <div className="flex items-center space-x-1">
-                      <Mail size={14} />
-                      <span className="break-all">{user.email}</span>
-                    </div>
-                    {user.country && (
-                      <div className="flex items-center space-x-1">
-                        <MapPin size={14} />
-                        <span>{user.country}</span>
-                      </div>
-                    )}
-                    <div className="flex items-center space-x-1">
-                      <Calendar size={14} />
-                      <span>Joined {new Date(user.createdAt).toLocaleDateString()}</span>
-                    </div>
+
+                {/* Meta Information */}
+                <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-4 text-sm sm:text-base text-gray-300 justify-center lg:justify-start">
+                  <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
+                    <Mail className="w-4 h-4 lg:w-5 lg:h-5" />
+                    <span className="truncate max-w-48">{user.email}</span>
                   </div>
-                  {user.bio && (
-                    <p className="mt-2 text-gray-300 text-sm sm:text-base">{user.bio}</p>
+                  {user.country && (
+                    <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
+                      <MapPin className="w-4 h-4 lg:w-5 lg:h-5" />
+                      <span>{user.country}</span>
+                    </div>
                   )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </ScrollAnimationWrapper>
-
-        {/* Stats Section */}
-        <ScrollAnimationWrapper>
-          <div className="container mx-auto px-4 py-6 sm:py-8">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-black/60 backdrop-blur-md border border-white/10 rounded-lg p-3 sm:p-4 text-center hover:bg-black/80 transition-all duration-300 cursor-pointer hover:scale-105"
-                >
-                  <stat.icon className="mx-auto mb-2 text-netflix-red" size={20} />
-                  <div className="text-lg sm:text-xl font-bold text-white">{stat.value}</div>
-                  <div className="text-xs sm:text-sm text-gray-400">{stat.label}</div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </ScrollAnimationWrapper>
-
-        {/* Tabs Section */}
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 space-y-4 lg:space-y-0">
-            <div className="flex overflow-x-auto space-x-1 bg-black/40 rounded-lg p-1 scroll-smooth">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center space-x-2 px-3 sm:px-4 py-2 rounded-md transition-all duration-200 whitespace-nowrap cursor-pointer hover:scale-105 ${
-                      activeTab === tab.id
-                        ? 'bg-netflix-red text-white'
-                        : 'text-gray-400 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    <Icon size={16} />
-                    <span className="text-sm sm:text-base">{tab.label}</span>
-                    {/* Count badges */}
-                    {tab.id === 'favorites' && favorites.count > 0 && (
-                      <span className="px-2 py-1 bg-netflix-red text-white text-xs rounded-full">
-                        {favorites.count}
-                      </span>
-                    )}
-                    {tab.id === 'watchlist' && watchlist.count > 0 && (
-                      <span className="px-2 py-1 bg-blue-500 text-white text-xs rounded-full">
-                        {watchlist.count}
-                      </span>
-                    )}
-                    {tab.id === 'recent' && recentWatches.count > 0 && (
-                      <span className="px-2 py-1 bg-green-500 text-white text-xs rounded-full">
-                        {recentWatches.count}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* View mode toggle and actions */}
-            {(activeTab === 'favorites' || activeTab === 'watchlist' || activeTab === 'recent') && (
-              <div className="flex items-center space-x-2 flex-wrap gap-2">
-                {activeTab === 'recent' && recentWatches.count > 0 && (
-                  <button
-                    onClick={handleClearRecentWatches}
-                    className="flex items-center space-x-1 px-3 py-2 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded-lg transition-colors text-sm cursor-pointer hover:scale-105"
-                  >
-                    <Trash2 size={14} />
-                    <span>Clear All</span>
-                  </button>
-                )}
-                
-                <button
-                  onClick={addSampleData}
-                  className="flex items-center space-x-1 px-3 py-2 bg-netflix-red/20 text-netflix-red hover:bg-netflix-red/30 rounded-lg transition-colors text-sm cursor-pointer hover:scale-105"
-                >
-                  <Plus size={14} />
-                  <span>Add Sample</span>
-                </button>
-
-                <div className="flex bg-black/40 rounded-lg p-1">
-                  <button
-                    onClick={() => setViewMode('grid')}
-                    className={`p-2 rounded transition-colors cursor-pointer hover:scale-105 ${
-                      viewMode === 'grid' ? 'bg-netflix-red text-white' : 'text-gray-400 hover:text-white'
-                    }`}
-                  >
-                    <Grid size={16} />
-                  </button>
-                  <button
-                    onClick={() => setViewMode('list')}
-                    className={`p-2 rounded transition-colors cursor-pointer hover:scale-105 ${
-                      viewMode === 'list' ? 'bg-netflix-red text-white' : 'text-gray-400 hover:text-white'
-                    }`}
-                  >
-                    <List size={16} />
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Tab Content */}
-          <div className="min-h-96">
-            {activeTab === 'overview' && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-              >
-                {/* Profile Info */}
-                <div className="lg:col-span-2 space-y-6">
-                  <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-lg p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-xl font-semibold text-white">Profile Information</h3>
-                      <button 
-                        onClick={() => info('Profile editing coming soon!')}
-                        className="flex items-center space-x-1 text-netflix-red hover:text-netflix-red-light transition-colors"
-                      >
-                        <Edit size={16} />
-                        <span>Edit</span>
-                      </button>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <div>
-                        <label className="text-sm text-gray-400">Full Name</label>
-                        <p className="text-white">{user.fullName}</p>
-                      </div>
-                      <div>
-                        <label className="text-sm text-gray-400">Email</label>
-                        <p className="text-white">{user.email}</p>
-                      </div>
-                      <div>
-                        <label className="text-sm text-gray-400">Subscription</label>
-                        <p className="text-white capitalize">{user.subscription.type}</p>
-                      </div>
-                      {user.bio && (
-                        <div>
-                          <label className="text-sm text-gray-400">Bio</label>
-                          <p className="text-white">{user.bio}</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Preferences */}
-                  <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-lg p-6">
-                    <h3 className="text-xl font-semibold text-white mb-4">Preferences</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="text-sm text-gray-400">Favorite Genres</label>
-                        <div className="flex flex-wrap gap-2 mt-1">
-                          {user.preferences.favoriteGenres.length > 0 ? (
-                            user.preferences.favoriteGenres.map((genre) => (
-                              <span
-                                key={genre}
-                                className="px-2 py-1 bg-netflix-red/20 text-netflix-red rounded text-sm"
-                              >
-                                {genre}
-                              </span>
-                            ))
-                          ) : (
-                            <span className="text-gray-500">No favorite genres set</span>
-                          )}
-                        </div>
-                      </div>
-                      <div>
-                        <label className="text-sm text-gray-400">Language</label>
-                        <p className="text-white">{user.preferences.preferredLanguage}</p>
-                      </div>
-                    </div>
+                  <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20">
+                    <Calendar className="w-4 h-4 lg:w-5 lg:h-5" />
+                    <span>Joined {new Date(user.createdAt).toLocaleDateString('en-US', { 
+                      month: 'short', 
+                      year: 'numeric' 
+                    })}</span>
                   </div>
                 </div>
 
-                {/* Quick Actions */}
-                <div className="space-y-6">
-                  <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-lg p-6">
-                    <h3 className="text-xl font-semibold text-white mb-4">Quick Actions</h3>
-                    <div className="space-y-3">
-                      <button 
-                        onClick={() => setActiveTab('favorites')}
-                        className="w-full flex items-center space-x-3 p-3 bg-white/5 hover:bg-white/10 rounded-lg transition-colors text-left"
-                      >
-                        <Heart size={20} className="text-netflix-red" />
-                        <span className="text-white">View Favorites</span>
-                      </button>
-                      <button 
-                        onClick={() => setActiveTab('watchlist')}
-                        className="w-full flex items-center space-x-3 p-3 bg-white/5 hover:bg-white/10 rounded-lg transition-colors text-left"
-                      >
-                        <Bookmark size={20} className="text-blue-500" />
-                        <span className="text-white">View Watchlist</span>
-                      </button>
-                      <button 
-                        onClick={() => setActiveTab('recent')}
-                        className="w-full flex items-center space-x-3 p-3 bg-white/5 hover:bg-white/10 rounded-lg transition-colors text-left"
-                      >
-                        <Clock size={20} className="text-green-500" />
-                        <span className="text-white">Recent Watches</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {activeTab === 'favorites' && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              >
-                {favorites.loading ? (
-                  <div className="flex items-center justify-center py-12">
-                    <ZeniXLoader isLoading={true} loadingText="Loading your favorites..." variant="component" />
-                  </div>
-                ) : favorites.count > 0 ? (
-                  <div className={`grid gap-4 ${
-                    viewMode === 'grid' 
-                      ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6' 
-                      : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-                  }`}>
-                    <AnimatePresence>
-                      {(favorites.items || []).map((item) => (
-                        <MediaCard
-                          key={`${item.mediaId}-${item.mediaType}`}
-                          item={item}
-                          onRemove={favorites.removeItem}
-                          type="favorites"
-                        />
-                      ))}
-                    </AnimatePresence>
+                {/* Bio Section */}
+                {user.bio ? (
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 lg:p-6 border border-white/20 max-w-3xl mx-auto lg:mx-0">
+                    <p className="text-gray-300 text-base lg:text-lg leading-relaxed">{user.bio}</p>
                   </div>
                 ) : (
-                  <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-lg p-8 text-center">
-                    <Heart size={48} className="mx-auto mb-4 text-netflix-red" />
-                    <h3 className="text-xl font-semibold text-white mb-2">Your Favorites</h3>
-                    <p className="text-gray-400 mb-2">Movies and shows you love will appear here</p>
-                    <p className="text-gray-500 text-sm mb-4">Start adding movies and TV shows to your favorites!</p>
+                  <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 lg:p-6 border border-white/10 border-dashed max-w-3xl mx-auto lg:mx-0">
+                    <p className="text-gray-400 text-sm lg:text-base italic mb-2">Add a bio to tell others about yourself</p>
                     <button 
-                      onClick={addSampleData}
-                      className="flex items-center space-x-2 mx-auto px-4 py-2 bg-netflix-red hover:bg-netflix-red-dark rounded-lg transition-colors text-white cursor-pointer hover:scale-105"
+                      onClick={handleEditProfile}
+                      className="flex items-center space-x-2 text-netflix-red hover:text-netflix-red-light transition-colors cursor-pointer mx-auto lg:mx-0"
                     >
-                      <Plus size={16} />
-                      <span>Add Sample Data</span>
+                      <Edit className="w-4 h-4" />
+                      <span>Add Bio</span>
                     </button>
                   </div>
                 )}
-              </motion.div>
-            )}
 
-            {activeTab === 'watchlist' && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              >
-                {watchlist.loading ? (
-                  <div className="flex items-center justify-center py-12">
-                    <ZeniXLoader isLoading={true} loadingText="Loading your watchlist..." variant="component" />
-                  </div>
-                ) : watchlist.count > 0 ? (
-                  <div className={`grid gap-4 ${
-                    viewMode === 'grid' 
-                      ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6' 
-                      : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-                  }`}>
-                    <AnimatePresence>
-                      {(watchlist.items || []).map((item) => (
-                        <MediaCard
-                          key={`${item.mediaId}-${item.mediaType}`}
-                          item={item}
-                          onRemove={watchlist.removeItem}
-                          type="watchlist"
-                        />
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                ) : (
-                  <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-lg p-8 text-center">
-                    <Bookmark size={48} className="mx-auto mb-4 text-blue-500" />
-                    <h3 className="text-xl font-semibold text-white mb-2">Your Watchlist</h3>
-                    <p className="text-gray-400 mb-2">Save movies and shows to watch later</p>
-                    <p className="text-gray-500 text-sm mb-4">Build your perfect watch queue!</p>
-                    <button 
-                      onClick={addSampleData}
-                      className="flex items-center space-x-2 mx-auto px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors text-white cursor-pointer hover:scale-105"
+                {/* Stats */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mx-auto lg:mx-0">
+                  {stats.map((stat, index) => (
+                    <motion.div
+                      key={stat.label}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 + index * 0.1 }}
+                      className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg p-3 sm:p-4 text-center hover:bg-white/20 transition-all duration-300 cursor-pointer hover:scale-105"
                     >
-                      <Plus size={16} />
-                      <span>Add Sample Data</span>
-                    </button>
-                  </div>
-                )}
-              </motion.div>
-            )}
+                      <stat.icon className="mx-auto mb-2 text-netflix-red" size={18} />
+                      <div className="text-base sm:text-lg md:text-xl font-bold text-white">{stat.value}</div>
+                      <div className="text-xs sm:text-sm text-gray-400">{stat.label}</div>
+                    </motion.div>
+                  ))}
+                </div>
 
-            {activeTab === 'recent' && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              >
-                {recentWatches.loading ? (
-                  <div className="flex items-center justify-center py-12">
-                    <ZeniXLoader isLoading={true} loadingText="Loading your watch history..." variant="component" />
-                  </div>
-                ) : recentWatches.count > 0 ? (
-                  <div className={`grid gap-4 ${
-                    viewMode === 'grid' 
-                      ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6' 
-                      : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-                  }`}>
-                    <AnimatePresence>
-                      {(recentWatches.items || []).map((item) => (
-                        <MediaCard
-                          key={`${item.mediaId}-${item.mediaType}-${item.watchedAt}`}
-                          item={item}
-                          showRemoveButton={false}
-                          showWatchProgress={true}
-                          type="recent"
-                        />
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                ) : (
-                  <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-lg p-8 text-center">
-                    <Clock size={48} className="mx-auto mb-4 text-green-500" />
-                    <h3 className="text-xl font-semibold text-white mb-2">Recent Watches</h3>
-                    <p className="text-gray-400 mb-2">Your viewing history will appear here</p>
-                    <p className="text-gray-500 text-sm mb-4">Keep track of what you've been watching!</p>
-                    <button 
-                      onClick={addSampleData}
-                      className="flex items-center space-x-2 mx-auto px-4 py-2 bg-green-500 hover:bg-green-600 rounded-lg transition-colors text-white cursor-pointer hover:scale-105"
+                {/* Actions */}
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 justify-center lg:justify-start">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: 0.8 }}
+                  >
+                    <Button
+                      variant="netflix"
+                      size="lg"
+                      icon={<Edit className="w-4 h-4 lg:w-5 lg:h-5" />}
+                      className="flex-1 sm:flex-initial"
+                      onClick={handleEditProfile}
                     >
-                      <Plus size={16} />
-                      <span>Add Sample Data</span>
-                    </button>
-                  </div>
-                )}
+                      Edit Profile
+                    </Button>
+                  </motion.div>
+                </div>
               </motion.div>
-            )}
+            </div>
           </div>
         </div>
-      </main>
+      </section>
+
+      {/* Content Section with Glass Morphism */}
+      <div className="relative">
+        {/* Background with gradients */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-bg-secondary/80 to-bg-primary" />
+        <div className="absolute inset-0 bg-gradient-to-r from-netflix-red/5 via-transparent to-netflix-red/5" />
+        
+        <div className="relative backdrop-blur-medium">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-8 sm:py-12 lg:py-16">
+            {/* Tab Navigation */}
+            <div className="mb-8 lg:mb-12">
+              <TabNavigation
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+                counts={counts}
+              />
+            </div>
+
+            {/* Tab Content */}
+            <div className="min-h-[60vh]">
+              <AnimatePresence mode="wait">
+                {activeTab === "overview" && (
+                  <motion.div
+                    key="overview"
+                    initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -30, scale: 0.95 }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    className="space-y-8"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                      {/* Profile Information */}
+                      <div className="glass-card p-4 sm:p-6 space-y-4 sm:space-y-6">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-text-primary to-text-secondary bg-clip-text text-transparent">
+                            Profile Information
+                          </h3>
+                          <button 
+                            onClick={handleEditProfile}
+                            className="flex items-center space-x-2 text-netflix-red hover:text-netflix-red-light transition-colors"
+                          >
+                            <Edit className="w-4 h-4" />
+                            <span className="hidden sm:inline">Edit</span>
+                          </button>
+                        </div>
+                        
+                        <div className="space-y-4">
+                          <div>
+                            <label className="text-sm text-text-muted">Full Name</label>
+                            <p className="text-text-primary font-medium">{user.fullName}</p>
+                          </div>
+                          <div>
+                            <label className="text-sm text-text-muted">Email</label>
+                            <p className="text-text-primary font-medium">{user.email}</p>
+                          </div>
+                          {user.country && (
+                            <div>
+                              <label className="text-sm text-text-muted">Country</label>
+                              <p className="text-text-primary font-medium">{user.country}</p>
+                            </div>
+                          )}
+                          <div>
+                            <label className="text-sm text-text-muted">Member Since</label>
+                            <p className="text-text-primary font-medium">
+                              {new Date(user.createdAt).toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                              })}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Activity Summary */}
+                      <div className="glass-card p-4 sm:p-6 space-y-4 sm:space-y-6">
+                        <h3 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-text-primary to-text-secondary bg-clip-text text-transparent">
+                          Activity Summary
+                        </h3>
+                        
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between p-3 bg-bg-tertiary/50 rounded-lg border border-glass-border">
+                            <div className="flex items-center space-x-3">
+                              <Heart className="w-5 h-5 text-red-500" />
+                              <span className="text-text-primary">Favorites</span>
+                            </div>
+                            <span className="text-netflix-red font-bold">{favorites.count || 0}</span>
+                          </div>
+                          
+                          <div className="flex items-center justify-between p-3 bg-bg-tertiary/50 rounded-lg border border-glass-border">
+                            <div className="flex items-center space-x-3">
+                              <Bookmark className="w-5 h-5 text-blue-500" />
+                              <span className="text-text-primary">Watchlist</span>
+                            </div>
+                            <span className="text-netflix-red font-bold">{watchlist.count || 0}</span>
+                          </div>
+                          
+                          <div className="flex items-center justify-between p-3 bg-bg-tertiary/50 rounded-lg border border-glass-border">
+                            <div className="flex items-center space-x-3">
+                              <Clock className="w-5 h-5 text-green-500" />
+                              <span className="text-text-primary">Recent Watches</span>
+                            </div>
+                            <span className="text-netflix-red font-bold">{recentWatches.count || 0}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+                
+                {activeTab === "favorites" && (
+                  <motion.div
+                    key="favorites"
+                    initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -30, scale: 0.95 }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    className="space-y-6 lg:space-y-8"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-text-primary to-text-secondary bg-clip-text text-transparent">
+                        My Favorites
+                      </h3>
+                      <div className="flex items-center gap-3">
+                        <div className="text-sm text-text-muted bg-netflix-red/10 border border-netflix-red/20 px-3 py-1 rounded-full backdrop-blur-sm">
+                          {favorites.count || 0} items
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {renderMediaGrid(
+                      favorites.items || [],
+                      "No favorites yet. Start adding movies and TV shows you love!",
+                      <Heart className="w-8 h-8 text-text-disabled" />
+                    )}
+                  </motion.div>
+                )}
+                
+                {activeTab === "watchlist" && (
+                  <motion.div
+                    key="watchlist"
+                    initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -30, scale: 0.95 }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    className="space-y-6 lg:space-y-8"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-text-primary to-text-secondary bg-clip-text text-transparent">
+                        My Watchlist
+                      </h3>
+                      <div className="flex items-center gap-3">
+                        <div className="text-sm text-text-muted bg-netflix-red/10 border border-netflix-red/20 px-3 py-1 rounded-full backdrop-blur-sm">
+                          {watchlist.count || 0} items
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {renderMediaGrid(
+                      watchlist.items || [],
+                      "Your watchlist is empty. Add movies and TV shows to watch later!",
+                      <Bookmark className="w-8 h-8 text-text-disabled" />
+                    )}
+                  </motion.div>
+                )}
+                
+                {activeTab === "recent" && (
+                  <motion.div
+                    key="recent"
+                    initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -30, scale: 0.95 }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    className="space-y-6 lg:space-y-8"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-text-primary to-text-secondary bg-clip-text text-transparent">
+                        Recent Watches
+                      </h3>
+                      <div className="flex items-center gap-3">
+                        <div className="text-sm text-text-muted bg-netflix-red/10 border border-netflix-red/20 px-3 py-1 rounded-full backdrop-blur-sm">
+                          {recentWatches.count || 0} items
+                        </div>
+                        {recentWatches.count > 0 && (
+                          <button
+                            onClick={handleClearRecentWatches}
+                            className="flex items-center space-x-1 px-3 py-2 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded-lg transition-colors text-sm cursor-pointer hover:scale-105"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            <span>Clear All</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {renderMediaGrid(
+                      recentWatches.items || [],
+                      "No recent watches yet. Start exploring movies and TV shows!",
+                      <Clock className="w-8 h-8 text-text-disabled" />
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <Footer />
     </div>

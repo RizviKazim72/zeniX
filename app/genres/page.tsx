@@ -57,17 +57,17 @@ const GenresIndexPage = () => {
               transition={{ duration: 0.4, delay: index * 0.05 }}
             >
               <Link href={`/genres/${genre.id}`}>
-                <div className={`glass-card p-5 h-44 flex flex-col justify-between hover:shadow-netflix transition-all duration-300 group cursor-pointer relative`}>                  
+                <div className={`glass-card p-5 h-44 flex flex-col justify-between hover:shadow-netflix transition-all duration-300 group cursor-pointer relative border-2 border-netflix-red/20 hover:border-netflix-red/50`}>                  
                   <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors duration-300 z-0 rounded-xl" />
                   <div className="relative z-10 h-full flex flex-col justify-between">
-                    <div className="text-3xl text-netflix-red group-hover:scale-110 transition-transform duration-300">
+                    <div className="text-3xl text-white group-hover:text-netflix-red group-hover:scale-110 transition-all duration-300">
                       {genre.icon}
                     </div>
                     <div>
                       <h3 className="text-xl font-semibold text-white group-hover:text-netflix-red transition-colors duration-300">
                         {genre.name}
                       </h3>
-                      <p className="text-sm text-text-muted line-clamp-2">
+                      <p className="text-sm text-gray-300 line-clamp-2">
                         {genre.description}
                       </p>
                     </div>
@@ -92,14 +92,14 @@ const GenresIndexPage = () => {
             <p className="text-text-muted mb-6">
               Search across genres or check what's trending globally.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link href="/search">
                 <button className="btn-netflix flex items-center gap-2">
                   <Search size={18} /> Search Content
                 </button>
               </Link>
               <Link href="/trending">
-                <button className="btn-glass flex items-center gap-2">
+                <button className="btn-glass flex items-center gap-4">
                   <Flame size={18} /> View Trending
                 </button>
               </Link>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Bookmark, Trash2, Play, Star, Calendar, Clock } from 'lucide-react';
+import { Heart, Bookmark, Trash2, Play, Star, Calendar, Clock, Plus } from 'lucide-react';
 import { MediaItem } from '@/services/mediaService';
 
 interface MediaCardProps {

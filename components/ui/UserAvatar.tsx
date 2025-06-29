@@ -1,6 +1,6 @@
 'use client';
 
-import { User } from 'lucide-react';
+import { UserRound } from 'lucide-react';
 
 interface UserAvatarProps {
   user?: {
@@ -8,7 +8,7 @@ interface UserAvatarProps {
     email?: string;
     profileImage?: string;
   } | null;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   className?: string;
   showOnlineStatus?: boolean;
 }
@@ -23,7 +23,8 @@ export default function UserAvatar({
     sm: 'w-8 h-8 text-xs',
     md: 'w-10 h-10 text-sm',
     lg: 'w-12 h-12 text-base',
-    xl: 'w-16 h-16 text-lg'
+    xl: 'w-16 h-16 text-lg',
+    '2xl': 'w-24 h-24 text-2xl'
   };
 
   const getInitials = (name?: string, email?: string) => {
@@ -79,7 +80,7 @@ export default function UserAvatar({
         ) : user ? (
           <span>{initials}</span>
         ) : (
-          <User className="w-1/2 h-1/2" />
+          <UserRound className="w-1/2 h-1/2" />
         )}
       </div>
       

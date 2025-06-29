@@ -1,5 +1,5 @@
 /**
- * Dynamic Genre Page Component
+ * Genre Page Component
  * Displays movies and TV shows for a specific genre with Netflix-style layout
  */
 
@@ -10,26 +10,21 @@ import { useParams, notFound } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Film, 
-  Tv, 
   Star, 
   Calendar, 
-  Play, 
-  Plus,
   Grid3X3,
-  List,
-  Filter,
-  ChevronDown
+  List
 } from "lucide-react";
 import Link from "next/link";
 
 // Component imports
-import { NavBar, Footer, Slider } from "@/components";
+import { NavBar, Footer } from "@/components";
+import ZeniXLoader from "@/components/ui/ZeniXLoader";
 
 // Hooks and utilities
 import { useGenreData } from "@/hooks";
 import { 
   getPosterUrl, 
-  getBackdropUrl,
   getMediaTitle,
   getMediaYear,
   getMediaUrl
@@ -39,16 +34,13 @@ import {
 import type { Movie, TVShow } from "@/types";
 
 type ViewMode = "grid" | "list";
-type SortOption = "popularity" | "rating" | "date" | "title";
 type FilterType = "all" | "movies" | "tv";
 
 /**
  * Loading Component
  */
 const LoadingSpinner = () => (
-  <div className="flex items-center justify-center py-20">
-    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-netflix-red"></div>
-  </div>
+  <ZeniXLoader isLoading={true} loadingText="Loading content..." variant="component" />
 );
 
 /**
@@ -98,7 +90,7 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, index, viewMode }) => {
               <img
                 src={posterUrl}
                 alt={title}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-300"
                 loading="lazy"
               />
             ) : (
@@ -139,14 +131,14 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, index, viewMode }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: index * 0.05 }}
-        className="group relative bg-bg-secondary border border-bg-tertiary hover:border-netflix-red/30 rounded-lg overflow-hidden transition-all duration-300 hover:transform hover:-translate-y-1"
+        className="group relative bg-black/60 backdrop-blur-md border border-white/10 hover:border-netflix-red/30 rounded-lg overflow-hidden transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-netflix-red/20 cursor-pointer"
       >
-        <div className="relative aspect-[2/3] bg-bg-tertiary">
+        <div className="relative aspect-[2/3] bg-bg-tertiary overflow-hidden">
           {posterUrl ? (
             <img
               src={posterUrl}
               alt={title}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               loading="lazy"
             />
           ) : (
@@ -155,29 +147,31 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, index, viewMode }) => {
             </div>
           )}
           
-          {/* Overlay with actions */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="absolute bottom-4 left-4 right-4">
+          {/* Dark overlay on hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
+            {/* Content that appears only on hover */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+              <h3 className="font-semibold text-lg mb-2 line-clamp-2">
+                {title}
+              </h3>
+              
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-1">
-                  <Star className="w-4 h-4 text-accent-gold fill-current" />
-                  <span className="text-white text-sm font-medium">{item.vote_average?.toFixed(1)}</span>
+                <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-1">
+                    <Star className="w-4 h-4 text-accent-gold fill-current" />
+                    <span className="text-sm font-medium">{item.vote_average?.toFixed(1)}</span>
+                  </div>
+                  <span className="text-sm text-gray-300">{year}</span>
                 </div>
-                <span className={`px-2 py-1 rounded-md text-xs font-medium ${
-                  isMovie ? 'bg-netflix-red text-white' : 'bg-accent-blue text-white'
+                
+                <span className={`px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wide ${
+                  isMovie ? 'bg-netflix-red text-white' : 'bg-blue-500 text-white'
                 }`}>
                   {isMovie ? 'Movie' : 'TV'}
                 </span>
               </div>
             </div>
           </div>
-        </div>
-        
-        <div className="p-3">
-          <h3 className="font-medium text-text-primary group-hover:text-netflix-red transition-colors duration-200 line-clamp-1 mb-1">
-            {title}
-          </h3>
-          <p className="text-sm text-text-muted">{year}</p>
         </div>
       </motion.div>
     </Link>
@@ -284,8 +278,6 @@ const GenrePage = () => {
     loading,
     error,
     genreConfig,
-    loadMoreMovies,
-    loadMoreTVShows,
     refetch
   } = useGenreData(genreSlug);
 
@@ -320,26 +312,9 @@ const GenrePage = () => {
     setFilterType(filter);
   }, []);
 
-  const handleLoadMore = useCallback(async () => {
-    if (filterType === "movies") {
-      await loadMoreMovies();
-    } else if (filterType === "tv") {
-      await loadMoreTVShows();
-    } else {
-      // Load both
-      await Promise.all([loadMoreMovies(), loadMoreTVShows()]);
-    }
-  }, [filterType, loadMoreMovies, loadMoreTVShows]);
-
   if (loading && !genreConfig) {
     return (
-      <div className="min-h-screen bg-bg-primary">
-        <NavBar />
-        <div className="pt-16">
-          <LoadingSpinner />
-        </div>
-        <Footer />
-      </div>
+      <ZeniXLoader isLoading={true} loadingText="Loading genre..." variant="page" />
     );
   }
 
@@ -404,24 +379,6 @@ const GenrePage = () => {
                     viewMode={viewMode}
                   />
                 ))}
-              </div>
-            )}
-
-            {/* Load More Button */}
-            {filteredData.length > 0 && (
-              <div className="flex justify-center mt-12">
-                <button
-                  onClick={handleLoadMore}
-                  disabled={loading}
-                  className="px-8 py-3 bg-netflix-red hover:bg-netflix-red-dark disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-md transition-colors duration-200 flex items-center space-x-2"
-                >
-                  {loading ? (
-                    <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white" />
-                  ) : (
-                    <Plus className="w-4 h-4" />
-                  )}
-                  <span>{loading ? "Loading..." : "Load More"}</span>
-                </button>
               </div>
             )}
           </motion.div>

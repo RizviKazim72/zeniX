@@ -4,7 +4,6 @@ import NavBar from "@/components/common/NavBar";
 import BannerSlider from "@/components/shared/BannerSlider";
 import Slider from "@/components/shared/Slider";
 import Footer from "@/components/common/Footer";
-import ScrollAnimationWrapper from "@/components/ui/ScrollAnimationWrapper";
 import { homeSliders } from "@/constants/config";
 
 export default function Home() {
@@ -14,13 +13,9 @@ export default function Home() {
       <BannerSlider category="movie" />
       
       <div className="space-y-12 pb-16">
-        {homeSliders.map((slider, index) => (
-          <ScrollAnimationWrapper 
-            key={slider.id}
-            delay={index * 150}
-            animationClass="smooth-reveal"
-          >
+        {homeSliders.map((slider) => (
             <Slider
+              key={slider.id}
               title={slider.title}
               endpoint={slider.endpoint}
               category={slider.category}
@@ -28,10 +23,9 @@ export default function Home() {
               type={slider.type}
               cardWidth={slider.cardWidth}
             />
-          </ScrollAnimationWrapper>
         ))}
       </div>
-      
+
       <Footer />
     </main>
   );

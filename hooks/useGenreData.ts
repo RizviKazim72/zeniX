@@ -14,15 +14,9 @@ export interface GenrePageData {
   loading: boolean;
   error: string | null;
   genreConfig: GenreConfig | null;
-  hasMoreMovies: boolean;
-  hasMoreTVShows: boolean;
-  currentMoviePage: number;
-  currentTVPage: number;
 }
 
 export interface UseGenreDataReturn extends GenrePageData {
-  loadMoreMovies: () => Promise<void>;
-  loadMoreTVShows: () => Promise<void>;
   refetch: () => Promise<void>;
 }
 
@@ -33,10 +27,6 @@ export const useGenreData = (genreSlug: string): UseGenreDataReturn => {
     loading: true,
     error: null,
     genreConfig: null,
-    hasMoreMovies: true,
-    hasMoreTVShows: true,
-    currentMoviePage: 1,
-    currentTVPage: 1,
   });
 
   const genreConfig = getGenreConfig(genreSlug);
@@ -66,10 +56,6 @@ export const useGenreData = (genreSlug: string): UseGenreDataReturn => {
         tvShows: result.tvShows.results,
         genreConfig,
         loading: false,
-        hasMoreMovies: result.movies.page < (result.movies.total_pages || 1),
-        hasMoreTVShows: result.tvShows.page < (result.tvShows.total_pages || 1),
-        currentMoviePage: 1,
-        currentTVPage: 1,
       }));
     } catch (error) {
       console.error('Error fetching genre data:', error);
@@ -81,51 +67,11 @@ export const useGenreData = (genreSlug: string): UseGenreDataReturn => {
     }
   };
 
-  const loadMoreMovies = async () => {
-    if (!genreConfig || !data.hasMoreMovies || data.loading) return;
-
-    try {
-      const nextPage = data.currentMoviePage + 1;
-      const result = await TMDBService.getMoviesByGenre(genreConfig.movieGenreId, nextPage);
-
-      setData(prev => ({
-        ...prev,
-        movies: [...prev.movies, ...result.results],
-        currentMoviePage: nextPage,
-        hasMoreMovies: nextPage < (result.total_pages || 1),
-      }));
-    } catch (error) {
-      console.error('Error loading more movies:', error);
-    }
-  };
-
-  const loadMoreTVShows = async () => {
-    if (!genreConfig || !data.hasMoreTVShows || data.loading) return;
-
-    try {
-      const nextPage = data.currentTVPage + 1;
-      const result = await TMDBService.getTVShowsByGenre(genreConfig.tvGenreId, nextPage);
-
-      setData(prev => ({
-        ...prev,
-        tvShows: [...prev.tvShows, ...result.results],
-        currentTVPage: nextPage,
-        hasMoreTVShows: nextPage < (result.total_pages || 1),
-      }));
-    } catch (error) {
-      console.error('Error loading more TV shows:', error);
-    }
-  };
-
   const refetch = async () => {
     setData(prev => ({
       ...prev,
       movies: [],
       tvShows: [],
-      currentMoviePage: 1,
-      currentTVPage: 1,
-      hasMoreMovies: true,
-      hasMoreTVShows: true,
     }));
     await fetchInitialData();
   };
@@ -136,8 +82,6 @@ export const useGenreData = (genreSlug: string): UseGenreDataReturn => {
 
   return {
     ...data,
-    loadMoreMovies,
-    loadMoreTVShows,
     refetch,
   };
 };

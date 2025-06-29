@@ -41,6 +41,7 @@ import type {
 
 // Component imports
 import { NavBar, Footer } from "@/components";
+import ZeniXLoader from "@/components/ui/ZeniXLoader";
 
 // Service and utility imports
 import { useMediaPageData } from "@/hooks";
@@ -70,9 +71,7 @@ type TabType = "overview" | "cast" | "reviews" | "similar" | "details";
  * Loading spinner component
  */
 const LoadingSpinner: React.FC = () => (
-  <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
-    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-red-500" />
-  </div>
+  <ZeniXLoader isLoading={true} loadingText="Loading TV show details..." variant="page" />
 );
 
 /**
@@ -209,7 +208,7 @@ const SimilarTVCard: React.FC<{ show: any; index: number }> = ({ show, index }) 
       className="group cursor-pointer"
       onClick={() => window.location.href = `/tv-shows/${show.id}`}
     >
-      <div className="relative overflow-hidden rounded-xl bg-slate-800">
+      <div className="relative overflow-hidden rounded-xl bg-black/60 backdrop-blur-md border border-white/10 hover:border-netflix-red/30 transition-all duration-300 hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-netflix-red/20">
         {posterUrl ? (
           <img
             src={posterUrl}
@@ -218,19 +217,25 @@ const SimilarTVCard: React.FC<{ show: any; index: number }> = ({ show, index }) 
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-80 bg-slate-700 flex items-center justify-center">
+          <div className="w-full h-80 bg-gray-800/50 flex items-center justify-center">
             <Tv className="w-16 h-16 text-gray-400" />
           </div>
         )}
         
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {/* Strong dark overlay matching slider cards */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300" />
         
-        <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-          <h4 className="font-semibold text-white mb-1 line-clamp-2">{title}</h4>
-          <p className="text-gray-300 text-sm">{year}</p>
-          <div className="flex items-center gap-1 mt-2">
-            <Star className="w-4 h-4 text-yellow-500 fill-current" />
-            <span className="text-yellow-500 text-sm">{show.vote_average?.toFixed(1)}</span>
+        <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+          <h4 className="font-semibold text-lg mb-1 line-clamp-2">{title}</h4>
+          <p className="text-gray-300 text-sm mb-2">{year}</p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1">
+              <Star className="w-4 h-4 text-accent-gold fill-current" />
+              <span className="text-sm font-medium">{show.vote_average?.toFixed(1)}</span>
+            </div>
+            <span className="px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wide bg-blue-500 text-white">
+              TV
+            </span>
           </div>
         </div>
       </div>
@@ -399,6 +404,7 @@ interface HeroSectionProps {
   isLiked: boolean;
   onWatchlistToggle: () => void;
   onLikeToggle: () => void;
+  onAddRecentWatch: () => void;
   onGoBack: () => void;
 }
 
@@ -414,9 +420,44 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   isLiked,
   onWatchlistToggle,
   onLikeToggle,
+  onAddRecentWatch,
   onGoBack
 }) => {
   const releaseDate = getMediaReleaseDate(details);
+  
+  // Share functionality
+  const handleShare = async (title: string, url: string) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Check out ${title} on ZeniX`,
+          text: `Watch ${title} and more amazing TV shows on ZeniX!`,
+          url: url,
+        });
+      } catch (error) {
+        console.log('Error sharing:', error);
+        fallbackShare(url);
+      }
+    } else {
+      fallbackShare(url);
+    }
+  };
+
+  const fallbackShare = (url: string) => {
+    navigator.clipboard.writeText(url).then(() => {
+      // You can show a toast here
+      alert('Link copied to clipboard!');
+    }).catch(() => {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = url;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      alert('Link copied to clipboard!');
+    });
+  };
   
   return (
     <section className="relative h-screen overflow-hidden">
@@ -529,8 +570,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 </div>
               )}
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full max-w-lg mx-auto lg:mx-0">
+              {/* Action Buttons - Improved layout for large screens */}
+              <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 w-full max-w-2xl mx-auto lg:mx-0">
+                {/* Primary Button - Watch Trailer */}
                 {trailerUrl && (
                   <motion.a
                     whileHover={{ scale: 1.02 }}
@@ -538,44 +580,53 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                     href={trailerUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-3 bg-red-600 hover:bg-red-700 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-red-500/25 w-full sm:flex-1"
+                    onClick={onAddRecentWatch}
+                    className="flex items-center justify-center gap-3 bg-netflix-red hover:bg-netflix-red-dark text-white px-6 sm:px-8 py-4 rounded-xl font-semibold text-base lg:text-lg transition-all duration-300 shadow-lg hover:shadow-netflix/25 lg:flex-1 min-h-[56px]"
                   >
-                    <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-current" />
-                    Watch Trailer
+                    <Play className="w-5 h-5 lg:w-6 lg:h-6 fill-current" />
+                    <span className="whitespace-nowrap">Watch Trailer</span>
                   </motion.a>
                 )}
                 
-                <div className="flex gap-3 sm:gap-4">
+                {/* Secondary Buttons Row */}
+                <div className="flex gap-3 lg:gap-4 lg:flex-shrink-0">
+                  {/* Watchlist Button */}
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={onWatchlistToggle}
-                    className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-4 rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 shadow-lg flex-1 ${
+                    className={`flex items-center justify-center gap-2 px-4 lg:px-6 py-4 rounded-xl font-semibold text-sm lg:text-base transition-all duration-300 shadow-lg min-h-[56px] min-w-[140px] lg:min-w-[160px] ${
                       isWatchlisted 
                         ? "bg-white text-black hover:bg-gray-200" 
                         : "bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20"
                     }`}
                   >
-                    <Plus className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-                    <span className="hidden sm:inline">{isWatchlisted ? "In Watchlist" : "Add to Watchlist"}</span>
-                    <span className="sm:hidden">{isWatchlisted ? "Added" : "Watchlist"}</span>
+                    <Plus className="w-4 h-4 lg:w-5 lg:h-5 flex-shrink-0" />
+                    <span className="whitespace-nowrap">
+                      {isWatchlisted ? "In Watchlist" : "Add to Watchlist"}
+                    </span>
                   </motion.button>
                   
+                  {/* Like Button */}
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={onLikeToggle}
-                    className="flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-xl font-semibold text-sm sm:text-base transition-all duration-300"
+                    className="flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white px-4 lg:px-6 py-4 rounded-xl font-semibold text-sm lg:text-base transition-all duration-300 min-h-[56px] min-w-[56px]"
+                    aria-label={isLiked ? "Remove from favorites" : "Add to favorites"}
                   >
-                    <Heart className={`w-4 h-4 sm:w-5 sm:h-5 ${isLiked ? "fill-current text-red-500" : ""}`} />
+                    <Heart className={`w-4 h-4 lg:w-5 lg:h-5 ${isLiked ? "fill-current text-red-500" : ""}`} />
                   </motion.button>
                   
+                  {/* Share Button */}
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-xl font-semibold text-sm sm:text-base transition-all duration-300"
+                    onClick={() => handleShare(title, window.location.href)}
+                    className="flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white px-4 lg:px-6 py-4 rounded-xl font-semibold text-sm lg:text-base transition-all duration-300 min-h-[56px] min-w-[56px]"
+                    aria-label="Share TV show"
                   >
-                    <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <Share2 className="w-4 h-4 lg:w-5 lg:h-5" />
                   </motion.button>
                 </div>
               </div>
@@ -705,6 +756,7 @@ const TVShowDetailsPage: React.FC = () => {
         isLiked={isLiked}
         onWatchlistToggle={handleWatchlistToggle}
         onLikeToggle={handleLikeToggle}
+        onAddRecentWatch={handleAddRecentWatch}
         onGoBack={() => router.back()}
       />
 

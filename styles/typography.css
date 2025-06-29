@@ -1,16 +1,16 @@
 /* ZeniX Typography System - Netflix & Disney Inspired */
 
 /* Font Face Declarations */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
 
 /* CSS Custom Properties for Typography */
 :root {
   /* Font Families */
-  --font-primary: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-cinematic: 'Cinzel', 'Playfair Display', serif;
-  --font-display: 'Playfair Display', 'Plus Jakarta Sans', sans-serif;
+  --font-display: 'Playfair Display', 'Inter', sans-serif;
   
   /* Font Sizes - Netflix Scale */
   --text-xs: 0.75rem;     /* 12px */

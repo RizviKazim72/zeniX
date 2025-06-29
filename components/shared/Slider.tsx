@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Star, Play, AlertCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star, Play, AlertCircle, TrendingUp, Flame, Film, Tv } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTMDBEndpoint } from "@/hooks";
 import { getPosterUrl, getMediaTitle, getMediaUrl } from "@/utils";
 import type { Movie, TVShow, MediaType } from "@/types";
@@ -19,6 +20,17 @@ interface SliderProps {
 }
 
 type MediaItem = Movie | TVShow;
+
+// Helper function to get appropriate icon for title
+const getTitleIcon = (title: string, category: string) => {
+  if (category.includes('trending-today')) return <Flame className="inline-block mr-2 text-orange-500" size={20} />;
+  if (category.includes('trending-week')) return <TrendingUp className="inline-block mr-2 text-blue-500" size={20} />;
+  if (category.includes('trending-movies')) return <Film className="inline-block mr-2 text-purple-500" size={20} />;
+  if (category.includes('trending-tv')) return <Tv className="inline-block mr-2 text-green-500" size={20} />;
+  if (title.includes('Popular Movies')) return <Star className="inline-block mr-2 text-yellow-500" size={20} />;
+  if (title.includes('Popular TV')) return <Tv className="inline-block mr-2 text-cyan-500" size={20} />;
+  return null;
+};
 
 const Slider: React.FC<SliderProps> = ({
   title,
@@ -92,8 +104,9 @@ const Slider: React.FC<SliderProps> = ({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: ANIMATION_CONFIG.DURATIONS.NORMAL / 1000 }}
-          className="text-2xl sm:text-3xl font-heading font-bold text-white mb-6 gradient-text"
+          className="text-2xl sm:text-3xl font-heading font-bold text-white mb-6 gradient-text flex items-center"
         >
+          {getTitleIcon(title, category)}
           {title}
         </motion.h2>
 
@@ -151,6 +164,13 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, type, cardWidth, index }) =
   const posterUrl = getPosterUrl(item.poster_path, "MEDIUM");
   const title = getMediaTitle(item);
   const mediaUrl = getMediaUrl(item);
+  const router = useRouter();
+
+  const handleWatchClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    router.push(mediaUrl);
+  };
 
   return (
     <Link href={mediaUrl}>
@@ -188,16 +208,12 @@ const MediaCard: React.FC<MediaCardProps> = ({ item, type, cardWidth, index }) =
             )}
             
             <motion.button
-              whileHover={{ scale: 1.05, backgroundColor: "#9333ea" }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-              onClick={(e) => {
-                e.preventDefault();
-                // Handle watch action
-                console.log(`Watch ${title}`);
-              }}
+              className="flex items-center gap-2 bg-netflix-red hover:bg-netflix-red-dark text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-netflix cursor-pointer"
+              onClick={handleWatchClick}
             >
-              <Play size={16} />
+              <Play size={16} fill="currentColor" />
               Watch
             </motion.button>
           </div>
@@ -260,7 +276,7 @@ interface SkeletonSectionProps {
 }
 
 const SkeletonSection: React.FC<SkeletonSectionProps> = ({ title, cardWidth }) => (
-  <section className="py-8 bg-slate-900">
+  <section className="py-8 bg-bg-primary">
     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
       <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">{title}</h2>
       <div className="grid grid-flow-col auto-cols-[minmax(12rem,_1fr)] gap-4 overflow-hidden">
@@ -281,7 +297,7 @@ interface ErrorSectionProps {
 }
 
 const ErrorSection: React.FC<ErrorSectionProps> = ({ title, message, category }) => (
-  <section className="py-8 bg-slate-900">
+  <section className="py-8 bg-bg-primary">
     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
       <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">{title}</h2>
       <div className="flex flex-col items-center justify-center py-12 bg-gray-800/20 rounded-xl">

@@ -4,13 +4,13 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  MenuIcon,
-  SearchIcon,
+  Menu,
+  Search,
   X,
   TrendingUp,
   Heart,
   User,
-  FilmIcon,
+  Film,
   LogOut,
 } from "lucide-react";
 import SideBar from "./SideBar";
@@ -46,7 +46,15 @@ const NavBar = () => {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && search.trim()) {
-      navigate(`/search?query=${encodeURIComponent(search.trim())}`, "Searching for content...");
+      navigate(`/search?q=${encodeURIComponent(search.trim())}`, "Searching for content...");
+      setSearch(""); // Clear search after navigation
+    }
+  };
+
+  const handleSearchSubmit = () => {
+    if (search.trim()) {
+      navigate(`/search?q=${encodeURIComponent(search.trim())}`, "Searching for content...");
+      setSearch(""); // Clear search after navigation
     }
   };
 
@@ -84,17 +92,17 @@ const NavBar = () => {
           <button
             onClick={() => setSideBarOpen(true)}
             className="h-9 w-9 flex items-center justify-center 
-        bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 rounded-sm transition-all duration-300"
+        bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 rounded-sm transition-all duration-300 cursor-pointer"
           >
-            <MenuIcon size={20} />
+            <Menu size={20} />
           </button>
 
           <button 
             onClick={() => navigate('/', 'Loading Home...')}
-            className="flex items-center space-x-2 group"
+            className="flex items-center space-x-2 group cursor-pointer"
           >
             <div className="h-8 w-8 bg-gradient-netflix flex items-center justify-center rounded-sm shadow-netflix group-hover:scale-110 transition-transform duration-300">
-              <FilmIcon size={20} />
+              <Film size={20} />
             </div>
             <span className="heading-card text-netflix-red group-hover:text-netflix-red-light transition-colors duration-300">
               zeniX.
@@ -109,7 +117,12 @@ const NavBar = () => {
     hover:bg-black/60 hover:border-netflix-red/50 focus-within:border-netflix-red focus-within:shadow-netflix 
     focus-within:bg-black/80 rounded-lg group cursor-text"
         >
-          <SearchIcon className="text-white/70 group-focus-within:text-netflix-red transition-colors duration-300" size={18} />
+          <button 
+            onClick={handleSearchSubmit}
+            className="text-white/70 group-focus-within:text-netflix-red transition-colors duration-300 hover:text-netflix-red cursor-pointer"
+          >
+            <Search size={18} />
+          </button>
           <input
             type="text"
             value={search}
@@ -122,7 +135,7 @@ const NavBar = () => {
           {search && (
             <button 
               onClick={() => setSearch("")}
-              className="p-1 hover:bg-white/10 rounded-full transition-all duration-200"
+              className="p-1 hover:bg-white/10 rounded-full transition-all duration-200 cursor-pointer"
             >
               <X
                 size={16}
@@ -134,13 +147,16 @@ const NavBar = () => {
 
         {/* RIGHT: Auth section */}
         <div className="flex items-center space-x-2">
-          <button
-            onClick={() => navigate('/myspace?tab=watchlist', 'Loading Watchlist...')}
-            className="h-9 w-9 flex items-center justify-center 
-        bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 transition-all duration-300 rounded-[3px] cursor-pointer"
-          >
-            <Heart size={18} />
-          </button>
+          {/* Watchlist/Heart icon - only show when authenticated */}
+          {isAuthenticated && user && (
+            <button
+              onClick={() => navigate('/myspace?tab=watchlist', 'Loading Watchlist...')}
+              className="h-9 w-9 flex items-center justify-center 
+          bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 transition-all duration-300 rounded-[3px] cursor-pointer"
+            >
+              <Heart size={18} />
+            </button>
+          )}
 
           {isAuthenticated && user ? (
             <div className="relative" ref={userMenuRef}>

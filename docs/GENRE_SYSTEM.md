@@ -42,7 +42,6 @@ Currently implemented genres:
 - **Netflix-style Layout**: Glass-morphism design with dark theme
 - **View Modes**: Grid and List view toggles
 - **Content Filtering**: All, Movies, TV Shows filters
-- **Infinite Scroll**: Load more functionality
 - **Responsive Design**: Mobile-first approach
 - **SEO Optimized**: Proper meta tags and structured data
 
@@ -109,8 +108,6 @@ The `useGenreData` hook provides:
   loading: boolean,
   error: string | null,
   genreConfig: GenreConfig | null,
-  loadMoreMovies: () => Promise<void>,
-  loadMoreTVShows: () => Promise<void>,
   refetch: () => Promise<void>
 }
 ```

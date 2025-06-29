@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { User, Camera, Upload } from 'lucide-react';
+import { UserRound, Camera, Upload } from 'lucide-react';
 
 interface ProfileImageUploaderProps {
   currentImage?: string;
@@ -82,7 +82,7 @@ export default function ProfileImageUploader({
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gray-800 rounded-full">
-            <User className="w-12 h-12 text-gray-400" />
+            <UserRound className="w-12 h-12 text-gray-400" />
           </div>
         )}
         

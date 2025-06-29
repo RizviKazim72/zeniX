@@ -1,66 +1,82 @@
 'use client';
 
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode, useRef, useCallback } from 'react';
 import { toast, ToastContainer, ToastOptions, Id } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 interface ToastContextType {
-  success: (message: string, options?: ToastOptions) => Id;
-  error: (message: string, options?: ToastOptions) => Id;
-  info: (message: string, options?: ToastOptions) => Id;
-  warning: (message: string, options?: ToastOptions) => Id;
-  loading: (message: string, options?: ToastOptions) => Id;
+  success: (message: string) => Id;
+  error: (message: string) => Id;
+  info: (message: string) => Id;
+  warning: (message: string) => Id;
+  loading: (message: string) => Id;
   dismiss: (toastId?: Id) => void;
-  update: (toastId: Id, options: ToastOptions) => void;
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
-const defaultOptions: ToastOptions = {
-  position: "top-right",
-  autoClose: 4000,
-  hideProgressBar: false,
-  closeOnClick: true,
-  pauseOnHover: true,
-  draggable: true,
-  theme: "dark",
-  style: {
-    background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
-    border: '1px solid rgba(229, 9, 20, 0.3)',
-    borderRadius: '12px',
-    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
-    fontFamily: 'var(--font-heading)',
-  }
-};
-
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const success = (message: string, options?: ToastOptions) => {
-    return toast.success(message, { ...defaultOptions, ...options });
-  };
+  const lastToastRef = useRef<{ message: string; timestamp: number; type: string } | null>(null);
 
-  const error = (message: string, options?: ToastOptions) => {
-    return toast.error(message, { ...defaultOptions, ...options });
-  };
+  const preventDuplicate = useCallback((message: string, type: string): boolean => {
+    const now = Date.now();
+    const lastToast = lastToastRef.current;
+    
+    // Prevent duplicates within 500ms of the same message and type
+    if (lastToast?.message === message && 
+        lastToast?.type === type && 
+        now - lastToast.timestamp < 500) {
+      return false;
+    }
+    
+    lastToastRef.current = { message, timestamp: now, type };
+    return true;
+  }, []);
 
-  const info = (message: string, options?: ToastOptions) => {
-    return toast.info(message, { ...defaultOptions, ...options });
-  };
+  const success = useCallback((message: string) => {
+    if (!preventDuplicate(message, 'success')) return '' as Id;
+    // Dismiss any existing toasts before showing new one
+    toast.dismiss();
+    return toast.success(message, {
+      toastId: `success-${message}`, // Unique ID to prevent duplicates
+    });
+  }, [preventDuplicate]);
 
-  const warning = (message: string, options?: ToastOptions) => {
-    return toast.warning(message, { ...defaultOptions, ...options });
-  };
+  const error = useCallback((message: string) => {
+    if (!preventDuplicate(message, 'error')) return '' as Id;
+    toast.dismiss();
+    return toast.error(message, {
+      toastId: `error-${message}`,
+    });
+  }, [preventDuplicate]);
 
-  const loading = (message: string, options?: ToastOptions) => {
-    return toast.loading(message, { ...defaultOptions, ...options });
-  };
+  const info = useCallback((message: string) => {
+    if (!preventDuplicate(message, 'info')) return '' as Id;
+    toast.dismiss();
+    return toast.info(message, {
+      toastId: `info-${message}`,
+    });
+  }, [preventDuplicate]);
 
-  const dismiss = (toastId?: Id) => {
+  const warning = useCallback((message: string) => {
+    if (!preventDuplicate(message, 'warning')) return '' as Id;
+    toast.dismiss();
+    return toast.warning(message, {
+      toastId: `warning-${message}`,
+    });
+  }, [preventDuplicate]);
+
+  const loading = useCallback((message: string) => {
+    if (!preventDuplicate(message, 'loading')) return '' as Id;
+    toast.dismiss();
+    return toast.loading(message, {
+      toastId: `loading-${message}`,
+    });
+  }, [preventDuplicate]);
+
+  const dismiss = useCallback((toastId?: Id) => {
     toast.dismiss(toastId);
-  };
-
-  const update = (toastId: Id, options: ToastOptions) => {
-    toast.update(toastId, options);
-  };
+  }, []);
 
   return (
     <ToastContext.Provider value={{ 
@@ -69,22 +85,29 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       info, 
       warning, 
       loading, 
-      dismiss, 
-      update 
+      dismiss
     }}>
       {children}
       <ToastContainer
         position="top-right"
-        autoClose={4000}
+        autoClose={3000}
         hideProgressBar={false}
-        newestOnTop={false}
+        newestOnTop={true}
         closeOnClick
         rtl={false}
         pauseOnFocusLoss
         draggable
         pauseOnHover
         theme="dark"
-        className="toast-container"
+        limit={1}
+        toastStyle={{
+          backgroundColor: '#1a1a1a',
+          color: '#ffffff',
+          borderRadius: '8px',
+          border: 'none',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
+        }}
+        className="!border-none"
       />
     </ToastContext.Provider>
   );

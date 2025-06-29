@@ -57,28 +57,6 @@
   transform: translateY(0);
 }
 
-/* Improved smooth animations */
-.smooth-reveal {
-  opacity: 0.1;
-  transform: translateY(20px) scale(0.95);
-  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-  will-change: opacity, transform;
-}
-
-.smooth-reveal.visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
-/* Prevent layout shift during animations */
-.content-placeholder {
-  min-height: 200px;
-  background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%);
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-  border-radius: 8px;
-}
-
 /* Smooth Button Transitions */
 .btn-smooth {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

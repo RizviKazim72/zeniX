@@ -6,12 +6,12 @@
  */
 
 import { NextRequest } from 'next/server';
-import { verifyToken } from '../../middleware/auth';
+import { verifyToken } from '@/middleware/auth';
 import { 
   getRecentWatches, 
   addRecentWatch,
   clearRecentWatches
-} from '../../controllers/userController';
+} from '@/controllers/userController';
 
 export async function GET(request: NextRequest) {
   // Verify authentication

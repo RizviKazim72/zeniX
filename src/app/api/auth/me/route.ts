@@ -10,7 +10,7 @@ import {
   logoutUser, 
   getCurrentUser, 
   refreshToken 
-} from '../../controllers/authController';
+} from '@/controllers/authController';
 
 export async function POST(request: NextRequest) {
   const { pathname } = new URL(request.url);

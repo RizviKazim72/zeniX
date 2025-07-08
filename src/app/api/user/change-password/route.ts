@@ -4,8 +4,8 @@
  */
 
 import { NextRequest } from 'next/server';
-import { verifyToken } from '../../middleware/auth';
-import { changePassword } from '../../controllers/userController';
+import { verifyToken } from '@/middleware/auth';
+import { changePassword } from '@/controllers/userController';
 
 export async function POST(request: NextRequest) {
   // Verify authentication

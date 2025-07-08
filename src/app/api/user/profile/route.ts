@@ -5,8 +5,8 @@
  */
 
 import { NextRequest } from 'next/server';
-import { verifyToken } from '../../middleware/auth';
-import { getUserProfile, updateUserProfile } from '../../controllers/userController';
+import { verifyToken } from '@/middleware/auth';
+import { getUserProfile, updateUserProfile } from '@/controllers/userController';
 
 export async function GET(request: NextRequest) {
   // Verify authentication

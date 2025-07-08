@@ -4,7 +4,7 @@
  */
 
 import { NextRequest } from 'next/server';
-import { registerUser } from '../../controllers/authController';
+import { registerUser } from '@/controllers/authController';
 
 export async function POST(request: NextRequest) {
   return await registerUser(request);

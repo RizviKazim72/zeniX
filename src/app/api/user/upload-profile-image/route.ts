@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/connectDB';
-import User from '@/app/api/models/User';
-import { getUserFromToken } from '@/app/api/middleware/auth';
+import User from '@/models/User';
+import { getUserFromToken } from '@/middleware/auth';
 
 export async function POST(request: NextRequest) {
   try {

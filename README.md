@@ -89,7 +89,7 @@ Open [http://localhost:3000](http://localhost:3000) to see the application.
 
 ## 📱 Screenshots
 
-[Add screenshots of your app here]
+soon 🔜
 
 ## 🎯 Key Components
 
@@ -113,12 +113,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Author
 
-**Meraj** - First Year IT Student  
-- GitHub: [@your-username](https://github.com/your-username)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/your-profile)
+**Kazim Rizvi** - First Year IT Student  
+- GitHub: [@your-username](https://github.com/RizviKazim72)
+- LinkedIn: [Your LinkedIn](https://www.linkedin.com/in/rizvi-kazim-haider-9710b5310/)
 
 ## 🙏 Acknowledgments
 
-- [TMDB](https://www.themoviedb.org/) for the amazing movie database API
-- [Next.js](https://nextjs.org/) team for the fantastic framework
+- [TMDB](https://www.themoviedb.org/) for the movies and tv-shows database API
+- [Next.js](https://nextjs.org/) team for the framework
 - [Vercel](https://vercel.com/) for hosting and deployment

@@ -1,8 +1,10 @@
 /**
- * Media Service - User content management
- * Handles favorites, watchlist, and recent watches functionality
+ * 🎬 Media Service - User Content Management
+ * Favorites, watchlist, recent watches sab handle karta hai
+ * Clean API calls with proper error handling
  */
 
+// Media item interface
 export interface MediaItem {
   mediaId: number;
   mediaType: 'movie' | 'tv';
@@ -15,6 +17,7 @@ export interface MediaItem {
   seasonNumber?: number;
 }
 
+// Standard API response interface
 export interface ApiResponse<T = unknown> {
   success: boolean;
   message: string;
@@ -25,7 +28,7 @@ export interface ApiResponse<T = unknown> {
 class MediaService {
   private baseUrl = '/api/user';
 
-  // Favorites Management
+  // ❤️ Favorites Management
   async addToFavorites(mediaItem: Omit<MediaItem, 'addedAt'>): Promise<ApiResponse> {
     try {
       const response = await fetch(`${this.baseUrl}/favorites`, {
@@ -36,25 +39,22 @@ class MediaService {
       });
       return await response.json();
     } catch (error) {
-      return {
-        success: false,
-        message: 'Failed to add to favorites',
-      };
+      return { success: false, message: 'Failed to add to favorites' };
     }
   }
 
   async removeFromFavorites(mediaId: number, mediaType: 'movie' | 'tv'): Promise<ApiResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}/favorites?mediaId=${mediaId}&mediaType=${mediaType}`, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
+      const response = await fetch(
+        `${this.baseUrl}/favorites?mediaId=${mediaId}&mediaType=${mediaType}`, 
+        {
+          method: 'DELETE',
+          credentials: 'include',
+        }
+      );
       return await response.json();
     } catch (error) {
-      return {
-        success: false,
-        message: 'Failed to remove from favorites',
-      };
+      return { success: false, message: 'Failed to remove from favorites' };
     }
   }
 
@@ -66,47 +66,37 @@ class MediaService {
       });
       return await response.json();
     } catch (error) {
-      return {
-        success: false,
-        message: 'Failed to fetch favorites',
-        data: [],
-      };
+      return { success: false, message: 'Failed to fetch favorites', data: [] };
     }
   }
 
-  // Watchlist Management
+  // 📚 Watchlist Management
   async addToWatchlist(mediaItem: Omit<MediaItem, 'addedAt'>): Promise<ApiResponse> {
     try {
       const response = await fetch(`${this.baseUrl}/watchlist`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(mediaItem),
       });
-
       return await response.json();
     } catch (error) {
-      return {
-        success: false,
-        message: 'Failed to add to watchlist',
-      };
+      return { success: false, message: 'Failed to add to watchlist' };
     }
   }
 
   async removeFromWatchlist(mediaId: number, mediaType: 'movie' | 'tv'): Promise<ApiResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}/watchlist?mediaId=${mediaId}&mediaType=${mediaType}`, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
+      const response = await fetch(
+        `${this.baseUrl}/watchlist?mediaId=${mediaId}&mediaType=${mediaType}`,
+        {
+          method: 'DELETE',
+          credentials: 'include',
+        }
+      );
       return await response.json();
     } catch (error) {
-      return {
-        success: false,
-        message: 'Failed to remove from watchlist',
-      };
+      return { success: false, message: 'Failed to remove from watchlist' };
     }
   }
 
@@ -116,35 +106,24 @@ class MediaService {
         method: 'GET',
         credentials: 'include',
       });
-
       return await response.json();
     } catch (error) {
-      return {
-        success: false,
-        message: 'Failed to fetch watchlist',
-        data: [],
-      };
+      return { success: false, message: 'Failed to fetch watchlist', data: [] };
     }
   }
 
-  // Recent Watches
+  // 🕐 Recent Watches Management
   async addToRecentWatches(mediaItem: Omit<MediaItem, 'watchedAt'>): Promise<ApiResponse> {
     try {
       const response = await fetch(`${this.baseUrl}/recent-watches`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(mediaItem),
       });
-
       return await response.json();
     } catch (error) {
-      return {
-        success: false,
-        message: 'Failed to add to recent watches',
-      };
+      return { success: false, message: 'Failed to add to recent watches' };
     }
   }
 
@@ -154,14 +133,9 @@ class MediaService {
         method: 'GET',
         credentials: 'include',
       });
-
       return await response.json();
     } catch (error) {
-      return {
-        success: false,
-        message: 'Failed to fetch recent watches',
-        data: [],
-      };
+      return { success: false, message: 'Failed to fetch recent watches', data: [] };
     }
   }
 
@@ -171,15 +145,12 @@ class MediaService {
         method: 'DELETE',
         credentials: 'include',
       });
-
       return await response.json();
     } catch (error) {
-      return {
-        success: false,
-        message: 'Failed to clear recent watches',
-      };
+      return { success: false, message: 'Failed to clear recent watches' };
     }
   }
 }
 
+// Export singleton instance
 export const mediaService = new MediaService();

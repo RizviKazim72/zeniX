@@ -1,20 +1,20 @@
 /**
- * Authentication Context
- * Provides authentication state and methods throughout the app
+ * 🔐 Authentication Context
+ * App wide authentication state aur methods provide karta hai
+ * JWT tokens, user data, login/logout sab manage karta hai
  */
 
 "use client";
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-
-// Types
 import { Movie, TVShow } from '@/types/tmdb';
 
+// 📱 User media item interface
 export interface UserMediaItem {
   id: number;
-  mediaId?: number; // For backward compatibility
+  mediaId?: number; // Backward compatibility
   type: 'movie' | 'tv';
-  mediaType?: 'movie' | 'tv'; // For backward compatibility  
+  mediaType?: 'movie' | 'tv'; // Backward compatibility  
   title?: string;
   name?: string;
   poster_path?: string | null;
@@ -29,6 +29,7 @@ export interface UserMediaItem {
   rating?: number;
 }
 
+// 👤 User interface - complete user profile
 interface User {
   _id: string;
   firstName: string;
@@ -59,6 +60,7 @@ interface User {
   fullName: string;
 }
 
+// 🔧 Auth context methods
 interface AuthContextType {
   user: User | null;
   loading: boolean;
@@ -70,6 +72,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
 }
 
+// 📝 Registration data interface
 interface RegisterData {
   firstName: string;
   lastName: string;
@@ -78,25 +81,26 @@ interface RegisterData {
   profileImage?: File | null;
 }
 
-// Create context
+// Auth context create karte hain
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Auth provider component
+// 🏗️ Auth Provider Component - wrapper for whole app
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  // State management
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Check authentication status on mount
+  // Component mount pe auth check karte hain
   useEffect(() => {
     checkAuth();
   }, []);
 
-  // Check if user is authenticated
+  // 🔍 Authentication status check karta hai
   const checkAuth = async () => {
     try {
       const response = await fetch('/api/auth/me', {
         method: 'GET',
-        credentials: 'include',
+        credentials: 'include', // Cookies include karte hain
       });
 
       const data = await response.json();
@@ -114,16 +118,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // Login function
+  // 🔑 Login function - user ko authenticate karta hai
   const login = async (email: string, password: string): Promise<{ success: boolean; message: string }> => {
     try {
       setLoading(true);
       
       const response = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
@@ -144,12 +146,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // Register function
+  // ✍️ Registration function - naye user ko register karta hai
   const register = async (userData: RegisterData): Promise<{ success: boolean; message: string }> => {
     try {
       setLoading(true);
       
-      // Create FormData to handle file upload
+      // FormData use karte hain file upload ke liye
       const formData = new FormData();
       formData.append('firstName', userData.firstName);
       formData.append('lastName', userData.lastName);
@@ -163,7 +165,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         credentials: 'include',
-        body: formData, // Send FormData instead of JSON
+        body: formData, // JSON nahi, FormData send kar rahe hain
       });
 
       const data = await response.json();
@@ -182,30 +184,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // Logout function
+  // 🚪 Logout function - user ko safely logout karta hai
   const logout = async (): Promise<void> => {
     try {
       await fetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include',
       });
-
       setUser(null);
     } catch (error) {
       console.error('Logout failed:', error);
-      // Still clear user state even if API call fails
-      setUser(null);
+      setUser(null); // API fail ho jaye toh bhi local state clear kar dete hain
     }
   };
 
-  // Update profile function
+  // 👤 Profile update function
   const updateProfile = async (userData: Partial<User>): Promise<{ success: boolean; message: string }> => {
     try {
       const response = await fetch('/api/user/profile', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(userData),
       });
@@ -224,6 +222,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  // Context value object - sab methods aur state export karte hain
   const value: AuthContextType = {
     user,
     loading,
@@ -232,7 +231,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     logout,
     updateProfile,
     checkAuth,
-    isAuthenticated: !!user,
+    isAuthenticated: !!user, // Simple boolean conversion
   };
 
   return (
@@ -242,7 +241,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
-// Custom hook to use auth context
+// 🪝 Custom hook to use auth context
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {

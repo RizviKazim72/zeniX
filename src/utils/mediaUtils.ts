@@ -1,14 +1,13 @@
 /**
- * Media utility functions for movie and TV show data handling
- * Provides unified interface for both movie and TV show objects
+ * 🎬 Media Utility Functions 
+ * Movie aur TV show data handle karne ke liye helper functions
+ * Type guards aur unified getters provide karte hain
  */
 
 import type { Movie, TVShow, MovieDetails, TVDetails, DetailsResponse } from "@/types/tmdb";
 import { MediaVideo } from '@/types/tmdb-types';
 
-/**
- * Type guards for distinguishing between movies and TV shows
- */
+// 🔍 Type Guards - Movie vs TV Show distinguish karte hain
 export const isMovie = (media: Movie | TVShow): media is Movie => {
   return 'title' in media && 'release_date' in media;
 };
@@ -25,21 +24,17 @@ export const isTVDetails = (details: DetailsResponse): details is TVDetails => {
   return 'name' in details && 'first_air_date' in details;
 };
 
-/**
- * Universal getters that work for both movies and TV shows
- */
+// 🔄 Universal Getters - Movie aur TV dono ke liye work karte hain
 export const getMediaTitle = (media: Movie | TVShow | DetailsResponse): string => {
-  if (isMovie(media) || isMovieDetails(media)) {
-    return media.title;
-  }
-  return (media as TVShow | TVDetails).name;
+  return isMovie(media) || isMovieDetails(media) 
+    ? media.title 
+    : (media as TVShow | TVDetails).name;
 };
 
 export const getMediaReleaseDate = (media: Movie | TVShow | DetailsResponse): string | undefined => {
-  if (isMovie(media) || isMovieDetails(media)) {
-    return media.release_date;
-  }
-  return (media as TVShow | TVDetails).first_air_date;
+  return isMovie(media) || isMovieDetails(media) 
+    ? media.release_date 
+    : (media as TVShow | TVDetails).first_air_date;
 };
 
 export const getMediaYear = (media: Movie | TVShow | DetailsResponse): string => {
@@ -51,9 +46,7 @@ export const getMediaType = (media: Movie | TVShow | DetailsResponse): "movie" |
   return isMovie(media) || isMovieDetails(media) ? "movie" : "tv";
 };
 
-/**
- * Format runtime for display
- */
+// ⏱️ Formatting Functions
 export const formatRuntime = (minutes?: number | number[]): string => {
   if (!minutes) return "N/A";
   
@@ -64,90 +57,61 @@ export const formatRuntime = (minutes?: number | number[]): string => {
   return `${Math.floor(runtime / 60)}h ${runtime % 60}m`;
 };
 
-/**
- * Format date for display
- */
 export const formatDate = (dateString?: string): string => {
   if (!dateString) return "N/A";
   return new Date(dateString).toLocaleDateString("en-US", {
     year: "numeric",
-    month: "long",
+    month: "long", 
     day: "numeric",
   });
 };
 
-/**
- * Format release year
- */
 export const formatYear = (dateString?: string): string => {
   if (!dateString) return "TBA";
   return new Date(dateString).getFullYear().toString();
 };
 
-/**
- * Format vote average for display
- */
 export const formatVoteAverage = (voteAverage?: number): string => {
   if (!voteAverage) return "N/A";
   return voteAverage.toFixed(1);
 };
 
-/**
- * Get genres as comma-separated string
- */
 export const getGenresString = (media: DetailsResponse): string => {
-  return media.genres?.map((g) => g.name).join(", ") || "N/A";
+  return media.genres?.map(g => g.name).join(", ") || "N/A";
 };
 
-/**
- * Get media URL path
- */
+// 🔗 URL and Path Generators
 export const getMediaUrl = (media: Movie | TVShow | DetailsResponse): string => {
   const type = getMediaType(media);
   const routePath = type === 'movie' ? 'movies' : 'tv-shows';
   return `/${routePath}/${media.id}`;
 };
 
-/**
- * Check if media has trailer
- */
+// 🎬 Video/Trailer Functions
 export const hasTrailer = (videos: MediaVideo[]): boolean => {
   return videos.some(video => 
-    video.type === "Trailer" && 
-    video.site === "YouTube"
+    video.type === "Trailer" && video.site === "YouTube"
   );
 };
 
-/**
- * Get trailer video
- */
 export const getTrailer = (videos: MediaVideo[]) => {
   return videos.find(video => 
-    video.type === "Trailer" && 
-    video.site === "YouTube"
+    video.type === "Trailer" && video.site === "YouTube"
   );
 };
 
-/**
- * Get YouTube trailer URL
- */
 export const getTrailerUrl = (videos: MediaVideo[]): string | null => {
   const trailer = getTrailer(videos);
   return trailer ? `https://www.youtube.com/watch?v=${trailer.key}` : null;
 };
 
-/**
- * Check if media is released
- */
+// 📅 Release Status Functions  
 export const isReleased = (media: Movie | TVShow | DetailsResponse): boolean => {
   const releaseDate = getMediaReleaseDate(media);
   if (!releaseDate) return false;
   return new Date(releaseDate) <= new Date();
 };
 
-/**
- * Get popularity level
- */
 export const getPopularityLevel = (popularity?: number): "low" | "medium" | "high" | "viral" => {
   if (!popularity) return "low";
   if (popularity < 10) return "low";
@@ -156,16 +120,11 @@ export const getPopularityLevel = (popularity?: number): "low" | "medium" | "hig
   return "viral";
 };
 
-/**
- * Sort media by popularity
- */
+// 🔄 Array Manipulation Functions
 export const sortByPopularity = <T extends Movie | TVShow>(media: T[]): T[] => {
   return [...media].sort((a, b) => (b.vote_average || 0) - (a.vote_average || 0));
 };
 
-/**
- * Sort media by release date
- */
 export const sortByReleaseDate = <T extends Movie | TVShow>(media: T[]): T[] => {
   return [...media].sort((a, b) => {
     const dateA = getMediaReleaseDate(a);
@@ -175,9 +134,6 @@ export const sortByReleaseDate = <T extends Movie | TVShow>(media: T[]): T[] => 
   });
 };
 
-/**
- * Filter media by minimum rating
- */
 export const filterByMinRating = <T extends Movie | TVShow>(
   media: T[], 
   minRating: number

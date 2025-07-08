@@ -7,50 +7,41 @@ import { useToast } from '@/context/ToastContext';
 type MediaListType = 'favorites' | 'watchlist' | 'recent';
 
 /**
- * Custom hook for managing user media lists
- * Handles CRUD operations for favorites, watchlist, and recent watches
+ * 🎬 useMediaList Hook 
+ * User ke media lists manage karta hai (favorites, watchlist, recent)
+ * CRUD operations provide karta hai saath toast notifications ke
  */
 export function useMediaList(type: MediaListType) {
+  // State management
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { success, error: showError } = useToast();
 
+  // 📡 API se data fetch karta hai
   const fetchItems = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      let response: ApiResponse<MediaItem[]>;
+      // Type ke basis pe appropriate service call
+      const serviceMap = {
+        favorites: () => mediaService.getFavorites(),
+        watchlist: () => mediaService.getWatchlist(), 
+        recent: () => mediaService.getRecentWatches()
+      };
       
-      switch (type) {
-        case 'favorites':
-          response = await mediaService.getFavorites();
-          break;
-        case 'watchlist':
-          response = await mediaService.getWatchlist();
-          break;
-        case 'recent':
-          response = await mediaService.getRecentWatches();
-          break;
-        default:
-          throw new Error('Invalid media list type');
-      }
+      const response = await serviceMap[type]();
 
       if (response.success && response.data) {
-        // Extract data from nested response structure
-        let items: MediaItem[] = [];
-        switch (type) {
-          case 'favorites':
-            items = (response.data as any).favorites || [];
-            break;
-          case 'watchlist':
-            items = (response.data as any).watchlist || [];
-            break;
-          case 'recent':
-            items = (response.data as any).recentWatches || [];
-            break;
-        }
+        // Nested response structure se data extract karta hai
+        const dataMap = {
+          favorites: (data: any) => data.favorites || [],
+          watchlist: (data: any) => data.watchlist || [],
+          recent: (data: any) => data.recentWatches || []
+        };
+        
+        const items = dataMap[type](response.data);
         setItems(items);
       } else {
         setError(response.message);
@@ -65,27 +56,20 @@ export function useMediaList(type: MediaListType) {
     }
   };
 
+  // ➕ Item add karta hai list mein
   const addItem = async (mediaItem: Omit<MediaItem, 'addedAt' | 'watchedAt'>) => {
     try {
-      let response: ApiResponse;
+      const serviceMap = {
+        favorites: () => mediaService.addToFavorites(mediaItem),
+        watchlist: () => mediaService.addToWatchlist(mediaItem),
+        recent: () => mediaService.addToRecentWatches(mediaItem)
+      };
       
-      switch (type) {
-        case 'favorites':
-          response = await mediaService.addToFavorites(mediaItem);
-          break;
-        case 'watchlist':
-          response = await mediaService.addToWatchlist(mediaItem);
-          break;
-        case 'recent':
-          response = await mediaService.addToRecentWatches(mediaItem);
-          break;
-        default:
-          throw new Error('Invalid media list type');
-      }
+      const response = await serviceMap[type]();
 
       if (response.success) {
         success(`Added to ${type} successfully!`);
-        await fetchItems();
+        await fetchItems(); // Refresh list
         return true;
       } else {
         showError(response.message);
@@ -97,23 +81,20 @@ export function useMediaList(type: MediaListType) {
     }
   };
 
+  // ➖ Item remove karta hai list se
   const removeItem = async (mediaId: number, mediaType: 'movie' | 'tv') => {
     try {
-      let response: ApiResponse;
+      const serviceMap = {
+        favorites: () => mediaService.removeFromFavorites(mediaId, mediaType),
+        watchlist: () => mediaService.removeFromWatchlist(mediaId, mediaType),
+        recent: () => { throw new Error('Cannot remove from recent watches'); }
+      };
       
-      switch (type) {
-        case 'favorites':
-          response = await mediaService.removeFromFavorites(mediaId, mediaType);
-          break;
-        case 'watchlist':
-          response = await mediaService.removeFromWatchlist(mediaId, mediaType);
-          break;
-        default:
-          throw new Error('Cannot remove from recent watches');
-      }
+      const response = await serviceMap[type]();
 
       if (response.success) {
         success(`Removed from ${type} successfully!`);
+        // Local state se bhi remove kar dete hain for instant UI update
         setItems(prev => prev.filter(item => 
           !(item.mediaId === mediaId && item.mediaType === mediaType)
         ));
@@ -128,6 +109,7 @@ export function useMediaList(type: MediaListType) {
     }
   };
 
+  // 🗑️ Recent watches clear karta hai (only for recent type)
   const clearAll = async () => {
     if (type !== 'recent') return false;
     
@@ -148,24 +130,25 @@ export function useMediaList(type: MediaListType) {
     }
   };
 
+  // 🔍 Check karta hai item exist karta hai ya nahi
   const hasItem = (mediaId: number, mediaType: 'movie' | 'tv') => {
     return items.some(item => item.mediaId === mediaId && item.mediaType === mediaType);
   };
 
+  // 🔄 Toggle function - add/remove smartly karta hai
   const toggleItem = async (mediaItem: Omit<MediaItem, 'addedAt' | 'watchedAt'>) => {
     const exists = hasItem(mediaItem.mediaId, mediaItem.mediaType);
-    
-    if (exists) {
-      return await removeItem(mediaItem.mediaId, mediaItem.mediaType);
-    } else {
-      return await addItem(mediaItem);
-    }
+    return exists ? 
+      await removeItem(mediaItem.mediaId, mediaItem.mediaType) : 
+      await addItem(mediaItem);
   };
 
+  // Component mount pe data fetch karta hai
   useEffect(() => {
     fetchItems();
   }, [type]);
 
+  // Hook ka return object - sab kuch export kar rahe hain
   return {
     items,
     loading,

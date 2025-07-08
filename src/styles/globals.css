@@ -1,0 +1,454 @@
+@import "tailwindcss";
+@import "./theme.css";
+@import "./typography.css";
+@import "./animations.css";
+
+:root {
+  /* Netflix Color Palette */
+  --netflix-red: #e50914;
+  --netflix-red-dark: #b20710;
+  --netflix-red-light: #ff1e2d;
+  --netflix-red-glow: rgb(229 9 20 / 0.3);
+
+  /* Background Colors */
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #141414;
+  --bg-card: rgb(20 20 20 / 0.8);
+  --bg-card-hover: rgb(25 25 25 / 0.9);
+
+  /* Glass Effect Colors */
+  --glass-bg: rgb(20 20 20 / 0.7);
+  --glass-border: rgb(255 255 255 / 0.1);
+  --glass-shadow: rgb(0 0 0 / 0.3);
+
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #e5e5e5;
+  --text-muted: #b3b3b3;
+  --text-disabled: #737373;
+
+  /* Accent Colors */
+  --accent-gold: #ffd700;
+  --accent-blue: #00d4ff;
+  --accent-green: #46d369;
+
+  /* Custom Shadows */
+  --shadow-netflix: 0 0 20px rgb(229 9 20 / 0.4);
+  --shadow-glass: 0 8px 32px rgb(0 0 0 / 0.4);
+  --shadow-glow: 0 0 20px rgb(229 9 20 / 0.3);
+
+  --background: #000000;
+  --foreground: #ffffff;
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 0 5px rgb(229 9 20 / 0.2), 0 0 10px rgb(229 9 20 / 0.2); }
+  100% { box-shadow: 0 0 10px rgb(229 9 20 / 0.4), 0 0 20px rgb(229 9 20 / 0.4); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Custom Utility Classes */
+.bg-netflix-red { background-color: var(--netflix-red); }
+.bg-netflix-red-dark { background-color: var(--netflix-red-dark); }
+.bg-netflix-red-light { background-color: var(--netflix-red-light); }
+.text-netflix-red { color: var(--netflix-red); }
+.text-netflix-red-dark { color: var(--netflix-red-dark); }
+.text-netflix-red-light { color: var(--netflix-red-light); }
+.border-netflix-red { border-color: var(--netflix-red); }
+.border-netflix-red-dark { border-color: var(--netflix-red-dark); }
+
+.bg-bg-primary { background-color: var(--bg-primary); }
+.bg-bg-secondary { background-color: var(--bg-secondary); }
+.bg-bg-tertiary { background-color: var(--bg-tertiary); }
+.bg-bg-card { background-color: var(--bg-card); }
+.bg-bg-card-hover { background-color: var(--bg-card-hover); }
+
+.text-text-primary { color: var(--text-primary); }
+.text-text-secondary { color: var(--text-secondary); }
+.text-text-muted { color: var(--text-muted); }
+.text-text-disabled { color: var(--text-disabled); }
+
+.bg-glass-bg { background-color: var(--glass-bg); }
+.border-glass-border { border-color: var(--glass-border); }
+.shadow-glass { box-shadow: var(--shadow-glass); }
+.shadow-netflix { box-shadow: var(--shadow-netflix); }
+.shadow-glow { box-shadow: var(--shadow-glow); }
+
+.text-accent-gold { color: var(--accent-gold); }
+.text-accent-blue { color: var(--accent-blue); }
+.text-accent-green { color: var(--accent-green); }
+.bg-accent-gold { background-color: var(--accent-gold); }
+.bg-accent-blue { background-color: var(--accent-blue); }
+.bg-accent-green { background-color: var(--accent-green); }
+
+.animate-glow { animation: glow 2s ease-in-out infinite alternate; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #000000;
+    --foreground: #ffffff;
+  }
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Enhanced Cursor styles for better UX */
+/* Pointer cursor for interactive elements */
+button, 
+a, 
+[role="button"], 
+[role="link"],
+[role="tab"],
+[role="menuitem"],
+.cursor-pointer,
+input[type="submit"],
+input[type="button"],
+input[type="checkbox"],
+input[type="radio"],
+select,
+.clickable,
+summary,
+details > summary,
+label[for],
+/* Media cards and interactive divs */
+[onclick],
+.card,
+.media-card,
+.movie-card,
+.tv-card,
+.trending-item,
+.genre-card,
+.search-result,
+.nav-item,
+.sidebar-item,
+/* Common interactive class patterns */
+[class*="card"]:not(.no-pointer),
+[class*="item"]:not(.no-pointer),
+[class*="button"]:not(.no-pointer),
+[class*="link"]:not(.no-pointer),
+[class*="clickable"]:not(.no-pointer),
+/* Next.js Link wrapper divs */
+.next-link-wrapper,
+/* Slider and carousel items */
+.slide,
+.slider-item,
+.carousel-item,
+/* Image containers that are clickable */
+.image-container[onclick],
+.poster-container,
+.thumbnail-container {
+  cursor: pointer !important;
+}
+
+/* Default cursor for non-interactive elements */
+div:not([onclick]):not(.clickable):not([class*="card"]):not([class*="button"]):not([class*="link"]),
+span:not(.clickable),
+p:not(.clickable),
+h1, h2, h3, h4, h5, h6,
+img:not(.clickable):not([onclick]),
+.no-pointer {
+  cursor: default;
+}
+
+/* Disabled state */
+button:disabled,
+[disabled],
+.disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed !important;
+}
+
+/* Text input cursor */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="url"],
+input[type="tel"],
+input[type="number"],
+textarea,
+select:not([multiple]),
+[contenteditable="true"],
+.editable {
+  cursor: text;
+}
+
+/* Move cursor for draggable elements */
+[draggable="true"],
+.draggable {
+  cursor: move;
+}
+
+/* Help cursor for elements with tooltips */
+[title]:not(input):not(textarea):not(select),
+.tooltip,
+[data-tooltip] {
+  cursor: help;
+}
+
+/* Wait cursor for loading states */
+.loading,
+.spinner,
+[aria-busy="true"] {
+  cursor: wait;
+}
+
+/* Grab cursor for scrollable areas */
+.scrollable,
+.slider-track,
+.carousel-track {
+  cursor: grab;
+}
+
+.scrollable:active,
+.slider-track:active,
+.carousel-track:active {
+  cursor: grabbing;
+}
+
+/* Zoom cursors for zoomable images */
+.zoomable {
+  cursor: zoom-in;
+}
+
+.zoomable.zoomed {
+  cursor: zoom-out;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Utility classes for cursor control */
+.cursor-auto { cursor: auto !important; }
+.cursor-default { cursor: default !important; }
+.cursor-pointer { cursor: pointer !important; }
+.cursor-wait { cursor: wait !important; }
+.cursor-text { cursor: text !important; }
+.cursor-move { cursor: move !important; }
+.cursor-help { cursor: help !important; }
+.cursor-not-allowed { cursor: not-allowed !important; }
+.cursor-grab { cursor: grab !important; }
+.cursor-grabbing { cursor: grabbing !important; }
+.cursor-zoom-in { cursor: zoom-in !important; }
+.cursor-zoom-out { cursor: zoom-out !important; }
+
+/* Force pointer on common interactive patterns */
+.interactive,
+.clickable-area,
+.hoverable {
+  cursor: pointer !important;
+}
+
+/* Remove pointer from text content */
+.text-content,
+.description,
+.summary {
+  cursor: default !important;
+}
+
+/* React-Toastify Custom Styling */
+.Toastify__progress-bar {
+  background: #e50914 !important;
+}
+
+.Toastify__progress-bar--success {
+  background: #22c55e !important;
+}
+
+.Toastify__progress-bar--error {
+  background: #ef4444 !important;
+}
+
+.Toastify__progress-bar--warning {
+  background: #f59e0b !important;
+}
+
+.Toastify__progress-bar--info {
+  background: #3b82f6 !important;
+}
+
+.Toastify__toast {
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+.Toastify__toast-container {
+  border: none !important;
+}
+
+.Toastify__toast--success,
+.Toastify__toast--error,
+.Toastify__toast--warning,
+.Toastify__toast--info,
+.Toastify__toast--default {
+  border: none !important;
+  outline: none !important;
+}
+
+.Toastify__toast-body {
+  border: none !important;
+}
+
+/* Custom Utility Classes for Tailwind v4 */
+.glass-card {
+  background-color: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.btn-netflix {
+  background-color: var(--netflix-red);
+  color: var(--text-primary);
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.btn-netflix:hover {
+  background-color: var(--netflix-red-dark);
+  box-shadow: var(--shadow-netflix);
+}
+
+.btn-glass {
+  background-color: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.btn-glass:hover {
+  background-color: var(--bg-card-hover);
+}
+
+.gradient-netflix {
+  background: linear-gradient(135deg, var(--netflix-red) 0%, var(--netflix-red-dark) 100%);
+}
+
+.gradient-glass {
+  background: linear-gradient(135deg, rgb(229 9 20 / 0.1) 0%, rgb(178 7 16 / 0.05) 100%);
+}
+
+.gradient-backdrop {
+  background: linear-gradient(180deg, rgb(0 0 0 / 0.1) 0%, rgb(0 0 0 / 0.8) 100%);
+}
+
+.gradient-hero {
+  background: linear-gradient(45deg, rgb(0 0 0 / 0.8) 0%, rgb(0 0 0 / 0.4) 50%, rgb(0 0 0 / 0.8) 100%);
+}
+
+/* Line Clamp Utilities for Text Truncation */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+.line-clamp-4 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+}
+
+.line-clamp-none {
+  overflow: visible;
+  display: block;
+  -webkit-box-orient: horizontal;
+  -webkit-line-clamp: none;
+  line-clamp: none;
+}
+
+/* Hero Video Full Screen Coverage */
+.hero-video-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+.hero-video-iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 56.25vw; /* 16:9 aspect ratio */
+  min-height: 100vh;
+  min-width: 177.78vh; /* 16:9 aspect ratio for height-based scaling */
+  border: none;
+  pointer-events: auto;
+}
+
+/* Ensure video covers full screen on all devices */
+@media (max-aspect-ratio: 16/9) {
+  .hero-video-iframe {
+    width: 177.78vh;
+    height: 100vh;
+  }
+}
+
+@media (min-aspect-ratio: 16/9) {
+  .hero-video-iframe {
+    width: 100vw;
+    height: 56.25vw;
+  }
+}
+
+/* Mobile specific video adjustments */
+@media (max-width: 768px) {
+  .hero-video-iframe {
+    width: 100vw;
+    height: 56.25vw;
+    min-height: 100vh;
+    min-width: 177.78vh;
+  }
+}

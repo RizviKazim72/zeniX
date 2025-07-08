@@ -1,9 +1,26 @@
 {
-  "name": "moviehub-next",
-  "version": "0.1.0",
+  "name": "zenix-movie-app",
+  "version": "1.0.0",
+  "description": "ZeniX - A Netflix-inspired movie and TV show streaming platform built with Next.js, TypeScript, and MongoDB",
   "private": true,
+  "author": "Your Name",
+  "homepage": "https://zenix-movie-app.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/zenix-movie-app.git"
+  },
+  "keywords": [
+    "nextjs",
+    "typescript",
+    "mongodb",
+    "movies",
+    "streaming",
+    "netflix-clone",
+    "tmdb-api",
+    "entertainment"
+  ],
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -26,11 +43,13 @@
     "multer": "^2.0.1",
     "next": "15.3.4",
     "next-auth": "^4.24.11",
+    "next-seo": "^6.8.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.6.2",
     "react-router-hash-link": "^2.4.3",
     "react-toastify": "^11.0.5",
+    "web-vitals": "^5.0.3",
     "zod": "^3.25.67"
   },
   "devDependencies": {

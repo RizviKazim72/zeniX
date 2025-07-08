@@ -1,8 +1,12 @@
-# 🎬 zeniX. - Modern Movie Hub
+# 🎬 ZeniX - Netflix-Inspired Movie Platform
 
 [![Next.js](https://img.shields.io/badge/Next.js-14-black.svg)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Database-green.svg)](https://mongodb.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black.svg)](https://vercel.com/)
+
+A modern, responsive movie and TV show streaming platform built with **Next.js 14**, **TypeScript**, and **MongoDB**. Inspired by Netflix's sleek design with smooth animations and intuitive user experience.
 [![TMDB API](https://img.shields.io/badge/TMDB-API-orange.svg)](https://www.themoviedb.org/documentation/api)
 
 A sleek, Netflix-inspired movie and TV show discovery platform built with modern web technologies. Discover, track, and manage your entertainment with personalized watchlists, favorites, and smart recommendations.

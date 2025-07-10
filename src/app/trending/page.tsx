@@ -1,7 +1,6 @@
 /**
  * Trending Page
  * Displays trending content organized by different time windows and genres
- * Uses optimized components and clean architecture patterns
  */
 
 "use client";

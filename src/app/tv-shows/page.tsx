@@ -1,7 +1,5 @@
 /**
  * TV Shows Page
- * Displays TV shows organized by genres with consistent design patterns
- * Follows DRY principles and matches movies page layout exactly
  */
 
 "use client";

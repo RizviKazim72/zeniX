@@ -1,14 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import ZeniXLoader from './ZeniXLoader';
 
 const PageLoader = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('Loading ZeniX Experience...');
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   // Get loading text based on route
   const getLoadingTextForRoute = (path: string) => {
@@ -19,8 +18,6 @@ const PageLoader = () => {
     if (path.includes('/profile')) return 'Loading Profile Settings...';
     if (path.includes('/trending')) return 'Loading Trending Content...';
     if (path.includes('/genres')) return 'Loading Genre Collections...';
-    if (path.includes('/login')) return 'Accessing ZeniX Portal...';
-    if (path.includes('/register')) return 'Creating Your ZeniX Account...';
     return 'Loading ZeniX Experience...';
   };
 
@@ -28,42 +25,16 @@ const PageLoader = () => {
     // Show loader when route changes
     setIsLoading(true);
     setLoadingText(getLoadingTextForRoute(pathname));
-    
-    // Hide loader after content has loaded
+
+    // Hide loader after delay
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2000); // Longer duration to ensure page loads
+    }, 2000); // 2 second delay
 
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [pathname, searchParams]);
+    return () => clearTimeout(timer);
+  }, [pathname]);
 
-  // Hide loader when page is fully loaded
-  useEffect(() => {
-    const handleLoad = () => {
-      setTimeout(() => setIsLoading(false), 300);
-    };
-
-    // Check if page is already loaded
-    if (document.readyState === 'complete') {
-      handleLoad();
-    } else {
-      window.addEventListener('load', handleLoad);
-    }
-
-    return () => {
-      window.removeEventListener('load', handleLoad);
-    };
-  }, []);
-
-  return (
-    <ZeniXLoader
-      isLoading={isLoading}
-      loadingText={loadingText}
-      variant="navigation"
-    />
-  );
+  return <ZeniXLoader isLoading={isLoading} loadingText={loadingText} variant="navigation" />;
 };
 
 export default PageLoader;

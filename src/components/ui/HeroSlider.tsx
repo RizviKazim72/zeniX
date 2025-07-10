@@ -73,7 +73,7 @@ export default function HeroSlider({
   };
 
   const handleAddToWatchlist = () => {
-    console.log('Add to watchlist:', heroContent[currentSlide]);
+    // Process add to watchlist for current slide
   };
 
   const handleMoreInfo = () => {

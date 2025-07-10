@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Film, Star, Calendar, Play, Info } from "lucide-react";
 import { Button } from "@/components";
 import ZeniXLoader from "@/components/ui/ZeniXLoader";
-import { TMDBService } from "@/services";
+import { TMDBService } from "@/services/tmdb-api";
 import { useNavigationLoading } from "@/hooks/useNavigationLoading";
 import {
   getBackdropUrl,

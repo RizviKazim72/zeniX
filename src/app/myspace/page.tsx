@@ -1,3 +1,8 @@
+/**
+ * MySpace Page - Personal dashboard for user content management
+ * Features: favorites, watchlist, recent watches with stats
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';

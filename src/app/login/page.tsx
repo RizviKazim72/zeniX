@@ -1,6 +1,5 @@
 /**
  * Login Page
- * Beautiful Netflix-style login form
  */
 
 "use client";

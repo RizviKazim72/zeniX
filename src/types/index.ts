@@ -1,6 +1,5 @@
 /**
  * Central export file for all types
- * Provides clean imports throughout the application
  */
 
 // Core TMDB types
@@ -14,18 +13,24 @@ export type {
   ApiResponse
 } from "./tmdb";
 
-// Extended types
+// Extended media types
 export type {
   MediaImage,
   MediaVideo,
   MediaCredit,
   MediaReview,
   MediaKeyword,
+  Person,
+  Episode,
+  Season,
+} from "./tmdb-types";
+
+// API response types
+export type {
   ProductionCompany,
   ProductionCountry,
   SpokenLanguage,
   Collection,
-  Person,
   PersonCombinedCredits,
   PersonMovieCredits,
   PersonTVCredits,
@@ -34,10 +39,6 @@ export type {
   WatchProvider,
   CountryWatchProviders,
   WatchProviders,
-  Episode,
-  Season,
-  DiscoverFilters,
-  TVDiscoverFilters,
   TMDBConfiguration,
   TMDBError,
   PaginatedResponse,
@@ -48,6 +49,10 @@ export type {
   KeywordsResponse,
   SimilarResponse,
   RecommendationsResponse,
+} from "./tmdb-types";
+
+// Utility types
+export type {
   MediaType,
   TimeWindow,
   SortBy,
@@ -59,7 +64,17 @@ export type {
   GenreFilter,
   YearFilter,
   RatingFilter,
+} from "./tmdb-types";
+
+// Component props types
+export type {
   MediaCardProps,
   MediaGridProps,
   MediaSliderProps
+} from "./tmdb-types";
+
+// Filter types
+export type {
+  DiscoverFilters,
+  TVDiscoverFilters,
 } from "./tmdb-types";

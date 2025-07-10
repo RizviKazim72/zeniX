@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Heart, Bookmark, Trash2, Play, Star, Calendar, Clock } from 'lucide-react';
 import { MediaItem } from '@/services/mediaService';
 
-// Props interface - MediaCard ke liye sab options
+// Use custom interface specific to this component's needs
 interface MediaCardProps {
   item: MediaItem;
   onRemove?: (mediaId: number, mediaType: 'movie' | 'tv') => void;

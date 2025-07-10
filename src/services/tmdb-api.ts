@@ -40,6 +40,38 @@ type Review = MediaReview;
 export class TMDBService {
   
   /**
+   * Generic method to fetch data from any TMDB endpoint
+   * This enables reusable data fetching across the application
+   */
+  static async fetchFromEndpoint<T>(endpoint: string, params: Record<string, any> = {}): Promise<T> {
+    try {
+      // Parse endpoint to extract any query parameters from the URL
+      const [path, queryString] = endpoint.split('?');
+      let combinedParams = { ...params };
+      
+      // If there are query parameters in the URL, extract and merge them
+      if (queryString) {
+        const urlParams = new URLSearchParams(queryString);
+        urlParams.forEach((value, key) => {
+          combinedParams[key] = value;
+        });
+      }
+      
+      // Clean the path by removing leading slashes
+      const cleanPath = path.replace(/^\/+/, '');
+      
+      console.log(`Fetching from: ${cleanPath} with params:`, combinedParams);
+      
+      // Use the dynamic method as a generic fetcher
+      const response = await tmdbApi.dynamic<T>(cleanPath, combinedParams);
+      return response;
+    } catch (error) {
+      console.error(`Error fetching from endpoint ${endpoint}:`, error);
+      throw error;
+    }
+  }
+  
+  /**
    * Get movies by genre
    */
   static async getMoviesByGenre(genreId: number, page = 1): Promise<ApiResponse<Movie>> {
@@ -741,6 +773,32 @@ export class TMDBService {
     } catch (error) {
       console.error('Error fetching mixed trending content with videos:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Get fallback recommendations when personalized recommendations fail
+   * This ensures users always see content even if recommendation engine fails
+   */
+  static async getFallbackRecommendations(count: number = 12): Promise<(Movie | TVShow)[]> {
+    try {
+      // Try to get popular movies as fallback
+      const popularMovies = await this.getPopularMovies();
+      
+      if (popularMovies && popularMovies.results && popularMovies.results.length > 0) {
+        return popularMovies.results.slice(0, count);
+      }
+      
+      // If that fails, try trending as a second fallback
+      const trending = await this.getTrendingMovies();
+      if (trending && trending.results && trending.results.length > 0) {
+        return trending.results.slice(0, count);
+      }
+      
+      return [];
+    } catch (error) {
+      console.error("Failed to get fallback recommendations:", error);
+      return [];
     }
   }
 }

@@ -1,3 +1,7 @@
+/**
+ * Search Page Suspense Component to handle loading state
+ */
+
 'use client';
 
 import { Suspense } from 'react';

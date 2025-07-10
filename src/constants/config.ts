@@ -78,6 +78,15 @@ export const genreBasedTVShows: GenreSliderConfig[] = [
 
 export const homeSliders: GeneralSliderConfig[] = [
   {
+    id: "whats-new",
+    title: "What's New",
+    endpoint: "/movie/now_playing",
+    category: "whats-new",
+    autoScroll: true,
+    type: "movie",
+    cardWidth: "w-[200px]"
+  },
+  {
     id: "upcoming-movies",
     title: "Upcoming Movies",
     endpoint: "/movie/upcoming",

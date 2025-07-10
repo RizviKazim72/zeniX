@@ -1,8 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
 import {
-  Film,
-  Github,
   Twitter,
   Instagram,
   Mail,
@@ -14,9 +12,10 @@ import {
   Monitor,
   Tv,
   LucideIcon,
+  Facebook,
+  Youtube,
 } from "lucide-react";
-
-// ========== FooterLink ==========
+import ZeniXLogo from "../ui/ZeniXLogo";
 interface FooterLinkProps {
   href: string;
   children: React.ReactNode;
@@ -35,9 +34,6 @@ const FooterLink: React.FC<FooterLinkProps> = ({ href, children, external = fals
     {external && <ExternalLink size={12} />}
   </motion.a>
 );
-
-
-// ========== SocialButton ==========
 interface SocialButtonProps {
   href: string;
   icon: LucideIcon;
@@ -57,50 +53,47 @@ const SocialButton: React.FC<SocialButtonProps> = ({ href, icon: Icon, label }) 
     <Icon size={18} className="text-text-muted group-hover:text-netflix-red transition-colors" />
   </motion.a>
 );
-
-// ========== Footer ==========
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   const footerSections = [
     {
-      title: "Movies & Shows",
+      title: "Discover",
       links: [
-        { label: "Popular Movies", href: "/movies/popular" },
-        { label: "Top Rated", href: "/movies/top-rated" },
-        { label: "TV Shows", href: "/tv-shows" },
-        { label: "Trending Now", href: "/trending" },
-        { label: "Coming Soon", href: "/coming-soon" },
+        { label: "Home", href: "/", external: false },
+        { label: "Movies", href: "/movies", external: false },
+        { label: "TV Shows", href: "/tv-shows", external: false },
+        { label: "Trending Now", href: "/trending", external: false },
+        { label: "Search", href: "/search", external: false },
       ],
     },
     {
-      title: "Features",
+      title: "Genres",
       links: [
-        { label: "My Watchlist", href: "/watchlist" },
-        { label: "Favorites", href: "/favorites" },
-        { label: "Recommendations", href: "/recommendations" },
-        { label: "Reviews", href: "/reviews" },
-        { label: "Collections", href: "/collections" },
+        { label: "Action", href: "/genres/action", external: false },
+        { label: "Comedy", href: "/genres/comedy", external: false },
+        { label: "Drama", href: "/genres/drama", external: false },
+        { label: "Horror", href: "/genres/horror", external: false },
+        { label: "Sci-Fi", href: "/genres/sci-fi", external: false },
+        { label: "All Genres", href: "/genres", external: false },
       ],
     },
     {
-      title: "Company",
+      title: "User",
       links: [
-        { label: "About Us", href: "/about" },
-        { label: "Contact", href: "/contact" },
-        { label: "Careers", href: "/careers" },
-        { label: "Press", href: "/press" },
-        { label: "Blog", href: "/blog", external: true },
+        { label: "My Space", href: "/myspace", external: false },
+        { label: "Profile", href: "/profile", external: false },
+        { label: "Login", href: "/login", external: false },
+        { label: "Register", href: "/register", external: false },
       ],
     },
     {
-      title: "Support",
+      title: "Movies",
       links: [
-        { label: "Help Center", href: "/help" },
-        { label: "Privacy Policy", href: "/privacy" },
-        { label: "Terms of Service", href: "/terms" },
-        { label: "Cookie Policy", href: "/cookies" },
-        { label: "DMCA", href: "/dmca" },
+        { label: "Popular", href: "/movies?sort=popular", external: false },
+        { label: "Top Rated", href: "/movies?sort=top_rated", external: false },
+        { label: "Now Playing", href: "/movies?sort=now_playing", external: false },
+        { label: "Upcoming", href: "/movies?sort=upcoming", external: false },
       ],
     },
   ];
@@ -108,15 +101,15 @@ const Footer = () => {
   const socialLinks: SocialButtonProps[] = [
     { href: "https://twitter.com/zenix", icon: Twitter, label: "Twitter" },
     { href: "https://instagram.com/zenix", icon: Instagram, label: "Instagram" },
-    { href: "https://github.com/zenix", icon: Github, label: "GitHub" },
+    { href: "https://facebook.com/zenix", icon: Facebook, label: "Facebook" },
+    { href: "https://youtube.com/zenix", icon: Youtube, label: "YouTube" },
   ];
 
   return (
     <footer className="bg-bg-primary/95 backdrop-blur-xl border-t border-glass-border text-white">
-      {/* Main */}
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
-          {/* Brand */}
+          {/* Brand Section */}
           <div className="lg:col-span-2">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -125,9 +118,7 @@ const Footer = () => {
               className="mb-6"
             >
               <div className="flex items-center space-x-2 mb-4">
-                <div className="w-10 h-10 bg-gradient-netflix rounded-lg flex items-center justify-center shadow-netflix">
-                  <Film size={24} />
-                </div>
+                <ZeniXLogo size="lg" />
                 <span className="text-2xl font-bold text-netflix-red">
                   zeniX
                 </span>
@@ -161,7 +152,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Footer Sections */}
           {footerSections.map((section, index) => (
             <motion.div
               key={section.title}
@@ -187,7 +177,6 @@ const Footer = () => {
           ))}
         </div>
 
-        {/* Stream Anywhere */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -199,7 +188,7 @@ const Footer = () => {
             <p className="text-text-muted">Enjoy zeniX on any device — anytime, anywhere</p>
           </div>
 
-          <div className="flex justify-center items-center space-x-8 mb-8">
+          <div className="flex justify-center items-center flex-wrap gap-6 mb-8">
             <div className="flex items-center space-x-2 text-text-muted">
               <Smartphone size={20} />
               <span>Mobile</span>
@@ -227,7 +216,6 @@ const Footer = () => {
         </motion.div>
       </div>
 
-      {/* Bottom Footer */}
       <div className="nav-separator bg-bg-secondary/50">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
@@ -243,8 +231,9 @@ const Footer = () => {
               for movie lovers worldwide.
             </div>
             <div className="flex items-center space-x-6 text-sm">
-              <FooterLink href="/accessibility">Accessibility</FooterLink>
-              <FooterLink href="/sitemap">Sitemap</FooterLink>
+              <FooterLink href="/privacy">Privacy</FooterLink>
+              <FooterLink href="/terms">Terms</FooterLink>
+              <FooterLink href="/help">Help</FooterLink>
               <div className="flex items-center space-x-2 text-text-disabled">
                 <div className="w-2 h-2 bg-accent-green rounded-full animate-pulse" />
                 <span>All systems operational</span>

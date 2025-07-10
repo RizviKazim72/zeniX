@@ -1,3 +1,8 @@
+/**
+ * Not Found Page
+ * Displays a 404 error message when a page is not found
+ */
+
 import Link from 'next/link';
 import { SearchX } from 'lucide-react';
 

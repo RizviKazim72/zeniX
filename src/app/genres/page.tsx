@@ -1,6 +1,5 @@
 /**
  * Genres Index Page
- * Revamped to match professional Netflix-style UI with glassmorphism and modern Lucide icons
  */
 
 "use client";

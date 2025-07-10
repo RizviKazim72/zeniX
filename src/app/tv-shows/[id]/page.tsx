@@ -1,7 +1,6 @@
 /**
  * TV Show Details Page Component
  * Displays comprehensive TV show information including details, cast, reviews, and similar content
- * Uses modern service layer, hooks, and utility patterns for maintainability
  */
 
 "use client";
@@ -434,7 +433,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           url: url,
         });
       } catch (error) {
-        console.log('Error sharing:', error);
+        // Handle share error silently
         fallbackShare(url);
       }
     } else {

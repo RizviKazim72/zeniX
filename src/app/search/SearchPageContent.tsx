@@ -1,7 +1,6 @@
 /**
  * Search Page Content Component
  * Provides search functionality with filters and displays trending content
- * Uses modern service layer, hooks, and utility patterns for maintainability
  */
 
 "use client";
@@ -26,7 +25,7 @@ import {
 import type { Movie, TVShow } from "@/types";
 
 // Service imports
-import { TMDBService } from "@/services";
+import { TMDBService } from "@/services/tmdb-api";
 
 /**
  * Search filters interface

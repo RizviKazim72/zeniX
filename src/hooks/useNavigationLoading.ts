@@ -9,8 +9,8 @@ interface UseNavigationLoadingProps {
 }
 
 export function useNavigationLoading({ 
-  loadingDelay = 0, // No delay for immediate feedback
-  minimumLoadingTime = 2000 // Longer time to ensure it shows during actual page load
+  loadingDelay = 0,
+  minimumLoadingTime = 2000
 }: UseNavigationLoadingProps = {}) {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('Loading ZeniX Experience...');
@@ -24,37 +24,31 @@ export function useNavigationLoading({
     if (url.includes('/profile')) return 'Loading Profile Settings...';
     if (url.includes('/trending')) return 'Loading Trending Content...';
     if (url.includes('/genres')) return 'Loading Genre Collections...';
-    if (url.includes('/login')) return 'Accessing ZeniX Portal...';
-    if (url.includes('/register')) return 'Creating Your ZeniX Account...';
     return 'Loading ZeniX Experience...';
   };
 
-  const navigate = async (url: string, customText?: string) => {
-    try {
-      // Immediately show loading state
-      setIsLoading(true);
-      setLoadingText(customText || getLoadingTextForRoute(url));
-      
-      // Start the navigation
+  const navigate = (url: string, customLoadingText?: string) => {
+    setIsLoading(true);
+    setLoadingText(customLoadingText || getLoadingTextForRoute(url));
+
+    const startTime = Date.now();
+    
+    setTimeout(() => {
       router.push(url);
       
-      // Keep loader visible for minimum time to handle actual page load
-      await new Promise(resolve => setTimeout(resolve, minimumLoadingTime));
-
-    } catch (error) {
-      console.error('Navigation error:', error);
-      // Keep minimum loading time even on error
-      await new Promise(resolve => setTimeout(resolve, minimumLoadingTime));
-    } finally {
-      setIsLoading(false);
-    }
+      // Ensure minimum loading time for consistent UX
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, minimumLoadingTime - elapsedTime);
+      
+      setTimeout(() => {
+        setIsLoading(false);
+      }, remainingTime);
+    }, loadingDelay);
   };
 
-  // Auto-hide loader when component unmounts (page actually loads)
+  // Auto-hide loader when component unmounts
   useEffect(() => {
-    return () => {
-      setIsLoading(false);
-    };
+    return () => setIsLoading(false);
   }, []);
 
   return {

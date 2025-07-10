@@ -42,8 +42,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Convert file to base64 for storage (for now)
-    // In production, you would upload to a cloud storage service like AWS S3, Cloudinary, etc.
+    // Convert file to base64 for storage
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     const base64 = buffer.toString('base64');

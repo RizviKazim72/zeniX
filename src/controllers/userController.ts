@@ -76,14 +76,13 @@ export async function updateUserProfile(request: NextRequest) {
     const validatedData = await validateRequest(request, UpdateProfileSchema);
     const sanitizedData = sanitizeInput(validatedData);
     
-    console.log('Raw validated data:', validatedData);
-    console.log('Sanitized data:', sanitizedData);
+    // Data validated and sanitized successfully
 
     // Convert dateOfBirth string to Date object if provided
     if (sanitizedData.dateOfBirth && typeof sanitizedData.dateOfBirth === 'string') {
       try {
         sanitizedData.dateOfBirth = new Date(sanitizedData.dateOfBirth);
-        console.log('Converted dateOfBirth:', sanitizedData.dateOfBirth);
+        // Date of birth converted successfully
       } catch (error) {
         console.error('Date conversion error:', error);
         delete sanitizedData.dateOfBirth; // Remove invalid date
@@ -97,7 +96,7 @@ export async function updateUserProfile(request: NextRequest) {
       { new: true, runValidators: true }
     );
     
-    console.log('Updated user dateOfBirth:', updatedUser?.dateOfBirth);
+    // User date of birth updated
 
     return NextResponse.json({
       success: true,

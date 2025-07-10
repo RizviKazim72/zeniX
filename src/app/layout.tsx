@@ -7,11 +7,11 @@ import { ToastProvider } from "@/context/ToastContext";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
 import PageLoaderWrapper from "@/components/ui/PageLoaderWrapper";
 
-// Modern font stack optimized for streaming interfaces
+// Font stack
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  display: 'swap',
+  display: "swap",
   preload: true,
 });
 
@@ -19,45 +19,58 @@ const roboto = Roboto({
   variable: "--font-roboto",
   subsets: ["latin"],
   weight: ["300", "400", "500", "700", "900"],
-  display: 'swap',
+  display: "swap",
 });
 
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800"],
-  display: 'swap',
+  display: "swap",
 });
 
-// Netflix-inspired modern font
 const jakartaSans = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800"],
-  display: 'swap',
+  display: "swap",
   preload: true,
 });
 
 export const metadata: Metadata = {
-  title: "zeniX. - Modern Movie Hub",
-  description: "Discover, track, and manage your favorite movies and TV shows with zeniX. - a sleek, Netflix-inspired platform with personalized watchlists, favorites, and recommendations.",
-  keywords: ["movies", "tv shows", "watchlist", "entertainment", "streaming", "favorites", "recommendations"],
+  title: "zeniX — Modern Movie Hub",
+  description:
+    "Discover, track, and manage your favorite movies and TV shows with zeniX — a sleek platform offering personalized watchlists, favorites, and recommendations.",
+  keywords: [
+    "movies",
+    "tv shows",
+    "watchlist",
+    "entertainment",
+    "streaming",
+    "favorites",
+    "recommendations",
+  ],
   authors: [{ name: "Kazim Rizvi" }],
   creator: "Kazim Rizvi",
   publisher: "zeniX.",
   robots: "index, follow",
   openGraph: {
-    title: "zeniX. - Modern Movie Hub",
-    description: "Discover, track, and manage your favorite movies and TV shows with a sleek, Netflix-inspired interface.",
+    title: "zeniX — Modern Movie Hub",
+    description:
+      "Discover, track, and manage your favorite movies and TV shows with a sleek, with personalized watchlists, favorites, and recommendations.",
     type: "website",
     locale: "en_US",
     siteName: "zeniX.",
   },
   twitter: {
-    card: "summary_large_image",
-    title: "zeniX. - Modern Movie Hub",
-    description: "Discover, track, and manage your favorite movies and TV shows",
-  },
+  card: "summary_large_image",
+  title: "zeniX — Modern Movie Hub",
+  description: "Discover and manage your favorite movies & TV shows with a sleek, modern interface.",
+  site: "@RizviKazim72",
+  creator: "@RizviKazim72",
+  images: ["https://zenix.vercel.app/preview.png"],
+}
+
 };
 
 export default function RootLayout({
@@ -67,7 +80,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${roboto.variable} ${poppins.variable} ${jakartaSans.variable} antialiased font-jakarta bg-bg-primary text-text-primary`}>
+      <body
+        className={`${inter.variable} ${roboto.variable} ${poppins.variable} ${jakartaSans.variable} antialiased font-jakarta bg-bg-primary text-text-primary`}
+      >
         <ErrorBoundary>
           <AuthProvider>
             <ToastProvider>

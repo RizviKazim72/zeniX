@@ -1,6 +1,6 @@
 /**
  * Genre Page Component
- * Displays movies and TV shows for a specific genre with Netflix-style layout
+ * Displays movies and TV shows for a specific genre
  */
 
 "use client";

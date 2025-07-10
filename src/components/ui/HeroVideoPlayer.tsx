@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, VolumeX, Volume2, Info, Plus } from 'lucide-react';
+import { Play, Pause, VolumeX, Volume2, Info } from 'lucide-react';
 import { Movie, TVShow } from '@/types/tmdb';
 import { MediaVideo } from '@/types/tmdb-types';
+import AddToWatchlistButton from './AddToWatchlistButton';
 
 interface HeroVideoPlayerProps {
   content: (Movie | TVShow) & { videos?: MediaVideo[] };
@@ -167,12 +168,12 @@ export default function HeroVideoPlayer({
       }`}>
         <div className="max-w-2xl">
           {/* Title - Mobile Responsive */}
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-white mb-2 sm:mb-4 heading-hero drop-shadow-2xl leading-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-white mb-2 sm:mb-4 heading-hero text-clean leading-tight">
             {getTitle()}
           </h1>
 
           {/* Meta Info - Mobile Responsive */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-4 sm:mb-6 text-white/90 drop-shadow-lg text-sm sm:text-base lg:text-lg">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-4 sm:mb-6 text-white/90 text-clean text-sm sm:text-base lg:text-lg">
             <span className="font-semibold">{getYear()}</span>
             <span className="w-1 h-1 bg-white/60 rounded-full hidden sm:block"></span>
             <span>
@@ -186,7 +187,7 @@ export default function HeroVideoPlayer({
           </div>
 
           {/* Description - Mobile Responsive */}
-          <p className={`text-sm sm:text-base lg:text-xl text-white/90 mb-4 sm:mb-8 leading-relaxed body-large drop-shadow-lg ${
+          <p className={`text-sm sm:text-base lg:text-xl text-white/90 mb-4 sm:mb-8 leading-relaxed body-large text-clean ${
             isMobile ? 'line-clamp-3' : 'line-clamp-4'
           }`}>
             {content.overview}
@@ -219,16 +220,18 @@ export default function HeroVideoPlayer({
               {isMobile && <span>Info</span>}
             </button>
 
-            {/* Add to Watchlist - Hidden on very small screens */}
-            <button
-              onClick={onAddToWatchlist}
-              className={`items-center space-x-2 bg-transparent border-2 border-white/40 hover:border-white/60 text-white font-semibold rounded-lg transition-all duration-300 ${
-                isMobile ? 'hidden sm:flex px-3 py-2 text-sm' : 'flex px-6 py-3'
-              }`}
-            >
-              <Plus size={isMobile ? 16 : 20} />
-              <span>Watchlist</span>
-            </button>
+            {/* Add to Watchlist - Use dedicated component instead of button */}
+            <div className={`${isMobile ? 'hidden sm:block' : 'block'}`}>
+              <AddToWatchlistButton 
+                mediaId={'id' in content ? content.id : 0}
+                mediaType={'title' in content ? 'movie' : 'tv'}
+                title={'title' in content ? content.title : content.name || ""}
+                posterPath={content.poster_path || ""}
+                className={`${
+                  isMobile ? 'px-3 py-2 text-sm' : 'px-6 py-3'
+                }`}
+              />
+            </div>
           </div>
 
           {/* Video Controls */}

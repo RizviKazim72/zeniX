@@ -12,7 +12,7 @@ export const connectDB = async () => {
     });
 
     isConnected = true;
-    console.log(" MongoDB Connected Successfully ");
+    // Connection established successfully
   } catch (error) {
     console.error(" MongoDB Connection Error: ", error);
     throw new Error("Database connection failed");

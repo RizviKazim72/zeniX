@@ -41,12 +41,28 @@ class RecommendationService {
       // Analyze user preferences
       this.analyzeUserPreferences(userBehavior);
       
-      const recommendations: RecommendationItem[] = [];
+      const recommendations: RecommendationItem[] = [];        // Get recommendations based on different strategies with fallbacks
+      let genreBasedRecs: RecommendationItem[] = [];
+      let similarContentRecs: RecommendationItem[] = [];
+      let trendingRecs: RecommendationItem[] = [];
       
-      // Get recommendations based on different strategies
-      const genreBasedRecs = await this.getGenreBasedRecommendations(userBehavior, 8);
-      const similarContentRecs = await this.getSimilarContentRecommendations(userBehavior, 6);
-      const trendingRecs = await this.getTrendingRecommendations(userBehavior, 6);
+      try {
+        genreBasedRecs = await this.getGenreBasedRecommendations(userBehavior, 8);
+      } catch (error) {
+        console.error("Failed to get genre-based recommendations:", error);
+      }
+      
+      try {
+        similarContentRecs = await this.getSimilarContentRecommendations(userBehavior, 6);
+      } catch (error) {
+        console.error("Failed to get similar content recommendations:", error);
+      }
+      
+      try {
+        trendingRecs = await this.getTrendingRecommendations(userBehavior, 6);
+      } catch (error) {
+        console.error("Failed to get trending recommendations:", error);
+      }
       
       recommendations.push(...genreBasedRecs, ...similarContentRecs, ...trendingRecs);
       

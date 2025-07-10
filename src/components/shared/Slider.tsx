@@ -2,7 +2,11 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Star, Play, AlertCircle, TrendingUp, Flame, Film, Tv } from "lucide-react";
+import { 
+  ChevronLeft, ChevronRight, Star, Play, AlertCircle, 
+  TrendingUp, Flame, Film, Tv, Award, Clock,
+  Calendar, BarChart, ThumbsUp, Zap
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -22,14 +26,38 @@ interface SliderProps {
 
 type MediaItem = Movie | TVShow;
 
-// Helper function to get appropriate icon for title
+/**
+ * Helper function to get appropriate Lucide icon for slider title
+ * Uses consistent icon system from Lucide instead of custom emojis
+ */
 const getTitleIcon = (title: string, category: string) => {
+  // Trending categories
   if (category.includes('trending-today')) return <Flame className="inline-block mr-2 text-orange-500" size={20} />;
   if (category.includes('trending-week')) return <TrendingUp className="inline-block mr-2 text-blue-500" size={20} />;
   if (category.includes('trending-movies')) return <Film className="inline-block mr-2 text-purple-500" size={20} />;
   if (category.includes('trending-tv')) return <Tv className="inline-block mr-2 text-green-500" size={20} />;
-  if (title.includes('Popular Movies')) return <Star className="inline-block mr-2 text-yellow-500" size={20} />;
-  if (title.includes('Popular TV')) return <Tv className="inline-block mr-2 text-cyan-500" size={20} />;
+  
+  // Popular content
+  if (category.includes('popular-movies') || title.includes('Popular Movies')) 
+    return <ThumbsUp className="inline-block mr-2 text-yellow-500" size={20} />;
+  if (category.includes('popular-tv') || title.includes('Popular TV')) 
+    return <ThumbsUp className="inline-block mr-2 text-cyan-500" size={20} />;
+  
+  // Top rated content
+  if (category.includes('top-rated')) 
+    return <Award className="inline-block mr-2 text-amber-500" size={20} />;
+  
+  // Upcoming/new content
+  if (category.includes('upcoming') || title.toLowerCase().includes('upcoming')) 
+    return <Calendar className="inline-block mr-2 text-indigo-400" size={20} />;
+  if (category.includes('whats-new') || title.includes('What\'s New')) 
+    return <Zap className="inline-block mr-2 text-yellow-400" size={20} />;
+  if (category.includes('now-playing')) 
+    return <Play className="inline-block mr-2 text-green-400" size={20} />;
+  if (category.includes('on-air')) 
+    return <Clock className="inline-block mr-2 text-blue-400" size={20} />;
+  
+  // Default case - return null if no matching category
   return null;
 };
 
@@ -89,8 +117,14 @@ const Slider: React.FC<SliderProps> = ({
     return <SkeletonSection title={title} cardWidth={cardWidth} />;
   }
 
-  if (error || !items.length) {
-    return <ErrorSection title={title} message={error} category={category} />;
+  if (error) {
+    console.error(`Slider error for ${title} (${endpoint}):`, error);
+    return <ErrorSection title={title} message={`Error loading content: ${error}`} category={category} />;
+  }
+
+  if (!items || !items.length) {
+    console.warn(`No items found for slider: ${title} (${endpoint})`);
+    return <ErrorSection title={title} message={`No ${type} content available at the moment`} category={category} />;
   }
 
   const isAtStart = scrollPosition === 0;
@@ -294,18 +328,42 @@ interface ErrorSectionProps {
   category: string;
 }
 
-const ErrorSection: React.FC<ErrorSectionProps> = ({ title, message, category }) => (
-  <section className="py-8 bg-bg-primary">
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">{title}</h2>
-      <div className="flex flex-col items-center justify-center py-12 bg-gray-800/20 rounded-xl">
-        <AlertCircle size={48} className="text-red-400 mb-4" />
-        <p className="text-gray-300 text-lg text-center">
-          {message || `No ${category} available at the moment`}
-        </p>
+const ErrorSection: React.FC<ErrorSectionProps> = ({ title, message, category }) => {
+  const [isRetrying, setIsRetrying] = useState(false);
+
+  // Add retry logic
+  const handleRetry = () => {
+    setIsRetrying(true);
+    // Force a reload of the slider after a short delay
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
+  };
+
+  return (
+    <section className="py-8 bg-bg-primary">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">
+          {getTitleIcon(title, category)}
+          {title}
+        </h2>
+        <div className="flex flex-col items-center justify-center py-12 bg-gray-800/20 rounded-xl">
+          <AlertCircle size={48} className="text-red-400 mb-4" />
+          <p className="text-gray-300 text-lg text-center mb-4">
+            {isRetrying ? "Loading content..." : message || `No ${category} available at the moment`}
+          </p>
+          {!isRetrying && (
+            <button 
+              onClick={handleRetry}
+              className="px-4 py-2 bg-red-600 hover:bg-red-500 transition-colors rounded text-sm font-medium text-white"
+            >
+              Reload Content
+            </button>
+          )}
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 export default Slider;

@@ -1,3 +1,7 @@
+/**
+ * Movies Index Page
+ */
+
 "use client";
 
 import { Suspense, useState, useEffect } from "react";
@@ -15,17 +19,22 @@ import { MediaVideo } from "@/types/tmdb-types";
 
 export default function MoviesPage() {
   const [showAllMovies, setShowAllMovies] = useState(false);
-  const [heroMovies, setHeroMovies] = useState<((Movie | TVShow) & { videos?: MediaVideo[] })[]>([]);
+  const [heroMovies, setHeroMovies] = useState<
+    ((Movie | TVShow) & { videos?: MediaVideo[] })[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const { navigate } = useNavigationLoading();
 
   useEffect(() => {
     const loadMovieHeroContent = async () => {
       try {
-        const movieContent = await TMDBService.getMultipleTrendingWithVideos('movie', 5);
+        const movieContent = await TMDBService.getMultipleTrendingWithVideos(
+          "movie",
+          5
+        );
         setHeroMovies(movieContent);
       } catch (error) {
-        console.error('Failed to load movie hero content:', error);
+        console.error("Failed to load movie hero content:", error);
       } finally {
         setLoading(false);
       }
@@ -37,7 +46,7 @@ export default function MoviesPage() {
   return (
     <main className="min-h-screen bg-bg-primary text-text-primary page-transition font-netflix">
       <NavBar />
-      
+
       {/* Hero Slider - Movies Only */}
       {heroMovies.length > 0 && !loading ? (
         <HeroSlider
@@ -66,13 +75,17 @@ export default function MoviesPage() {
               size="sm"
               icon={<Grid size={16} />}
               className="whitespace-nowrap bg-purple-500/20 border border-purple-500/30 text-purple-400 hover:bg-purple-500/30 flex-shrink-0"
-              ariaLabel={showAllMovies ? 'Hide movie grid' : 'Browse all movies'}
+              ariaLabel={
+                showAllMovies ? "Hide movie grid" : "Browse all movies"
+              }
             >
-              {showAllMovies ? 'Hide Grid' : 'Browse All'}
+              {showAllMovies ? "Hide Grid" : "Browse All"}
             </Button>
 
             <Button
-              onClick={() => navigate('/myspace?tab=favorites', 'Loading Favorites...')}
+              onClick={() =>
+                navigate("/myspace?tab=favorites", "Loading Favorites...")
+              }
               variant="netflix"
               size="sm"
               icon={<Heart size={16} />}
@@ -83,7 +96,9 @@ export default function MoviesPage() {
             </Button>
 
             <Button
-              onClick={() => navigate('/myspace?tab=watchlist', 'Loading Watchlist...')}
+              onClick={() =>
+                navigate("/myspace?tab=watchlist", "Loading Watchlist...")
+              }
               variant="accent"
               size="sm"
               icon={<Bookmark size={16} />}
@@ -94,7 +109,9 @@ export default function MoviesPage() {
             </Button>
 
             <Button
-              onClick={() => navigate('/myspace?tab=recent', 'Loading Recent Watches...')}
+              onClick={() =>
+                navigate("/myspace?tab=recent", "Loading Recent Watches...")
+              }
               variant="accent"
               size="sm"
               icon={<Clock size={16} />}

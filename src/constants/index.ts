@@ -3,14 +3,12 @@
  * Central access point for all application constants
  */
 
-// Export all genres-related constants
-export * from './genres';
+// API and config constants
+export * from './config';
 
-// Export sidebar constants  
+// Content organization
+export * from './genres';
 export * from './sidebar';
 
-// Export search data constants
+// Search related constants
 export * from './searchData';
-
-// Export config constants
-export * from './config';

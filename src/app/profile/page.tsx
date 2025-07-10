@@ -1,3 +1,8 @@
+/**
+ * Profile Page
+ * Included user information, preferences, and profile image upload functionality.
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -55,8 +60,7 @@ export default function ProfilePage() {
         }
       }
 
-      console.log('User data:', user); // Debug log
-      console.log('Formatted date:', formattedDate); // Debug log
+      // User and date loaded successfully
 
       setFormData({
         firstName: user.firstName || '',
@@ -149,7 +153,7 @@ export default function ProfilePage() {
             updatePayload.avatar = imageData.imageUrl;
           }
         } catch (error) {
-          console.log('Image upload failed, continuing with other updates:', error);
+          // Silently continue if image upload fails
         }
       }
 

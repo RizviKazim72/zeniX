@@ -8,6 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
 import UserAvatar from "@/components/ui/UserAvatar";
 import ZeniXLoader from "@/components/ui/ZeniXLoader";
+import ZenixLogo from "@/components/ui/ZeniXLogo";
 import { useNavigationLoading } from "@/hooks/useNavigationLoading";
 
 /**
@@ -94,11 +95,6 @@ const NavBar = () => {
             onClick={() => navigate('/', 'Loading Home...')}
             className="flex items-center space-x-2 group cursor-pointer"
           >
-            <div className="h-8 w-8 bg-gradient-netflix flex items-center justify-center 
-                           rounded-sm shadow-netflix group-hover:scale-110 transition-transform 
-                           duration-300">
-              <Film size={20} />
-            </div>
             <span className="heading-card text-netflix-red group-hover:text-netflix-red-light 
                            transition-colors duration-300">
               zeniX.

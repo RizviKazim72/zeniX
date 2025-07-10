@@ -1,11 +1,12 @@
 "use client";
 
 import { useRef, useCallback } from "react";
-import { Film, X } from "lucide-react";
+import { X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MainSideBarLinks, GenresSideBarLinks } from "@/constants/sidebar";
 import useOutsideClick from "@/utils/useOutsideClick";
+import ZeniXLogo from "@/components/ui/ZeniXLogo";
 
 interface SideBarProps {
   sideBarOpen: boolean;
@@ -20,9 +21,7 @@ const SideBar: React.FC<SideBarProps> = ({ sideBarOpen, setSideBarOpen }) => {
     setSideBarOpen(false);
   }, [setSideBarOpen]);
 
-  useOutsideClick<HTMLDivElement>(sideBarRef, handleOutsideClick);
-
- return (
+  useOutsideClick<HTMLDivElement>(sideBarRef, handleOutsideClick);  return (
   <>
     {/* Sidebar */}
     <div
@@ -30,9 +29,9 @@ const SideBar: React.FC<SideBarProps> = ({ sideBarOpen, setSideBarOpen }) => {
       tabIndex={-1}
       aria-expanded={sideBarOpen}
       className={`h-screen overflow-auto no-scrollbar fixed left-0 top-0 w-64 sm:w-72 flex flex-col justify-between pb-4 z-50 transform transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]
-        bg-gradient-to-b from-black/95 via-black/85 to-black/75 backdrop-blur-xl border-r border-white/20 shadow-2xl ${
+        bg-gradient-to-b from-black/95 via-black/85 to-black/75 backdrop-blur-xl border-r border-white/10 ${
           sideBarOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
-        }`}
+        } no-box-shadow clean-blur`}
       style={{
         transitionProperty: 'transform, opacity, visibility',
         visibility: sideBarOpen ? 'visible' : 'hidden',
@@ -40,24 +39,22 @@ const SideBar: React.FC<SideBarProps> = ({ sideBarOpen, setSideBarOpen }) => {
       }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 w-full border-b border-white/20 mb-4 bg-black/30 backdrop-blur-md">
+      <div className="flex items-center justify-between p-4 w-full border-b border-white/10 mb-4 bg-black/20 subtle-blur-bg">
         <Link href="/" className="group">
           <div className="flex items-center space-x-2">
-            <div className="h-8 w-8 bg-gradient-netflix flex items-center justify-center rounded-lg shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 ease-out">
-              <Film size={20} className="group-hover:rotate-12 transition-transform duration-300" />
-            </div>
-            <span className="text-xl font-bold text-netflix-red group-hover:text-netflix-red-light tracking-tight transition-all duration-300 group-hover:scale-105">
-              zeniX.
+            <ZeniXLogo size="md" className="group-hover:scale-110 transition-all duration-300 ease-out" />
+            <span className="text-xl font-bold text-red-600 group-hover:text-red-500 tracking-tight transition-all duration-300 group-hover:scale-105">
+              zeniX
             </span>
           </div>
         </Link>
 
         <button
           onClick={() => setSideBarOpen(false)}
-          className="h-8 w-8 flex items-center justify-center bg-white/10 hover:bg-white/25 backdrop-blur-md border border-white/20 rounded-lg transition-all duration-300 hover:scale-110 hover:rotate-90 group"
+          className="h-8 w-8 flex items-center justify-center hover:bg-black/30 text-white/80 hover:text-white transition-all duration-300"
           aria-label="Close sidebar"
         >
-          <X size={20} className="group-hover:rotate-180 transition-transform duration-300" />
+          <X size={20} strokeWidth={1.5} />
         </button>
       </div>
 
@@ -76,15 +73,15 @@ const SideBar: React.FC<SideBarProps> = ({ sideBarOpen, setSideBarOpen }) => {
               }}
             >
               <div
-                className={`flex items-center space-x-3 px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 ease-out transform group-hover:scale-[1.02] group-hover:translate-x-1
+                className={`flex items-center space-x-3 px-4 py-3 text-sm font-medium rounded transition-all duration-300 ease-out
                   ${
                     isActive
-                      ? "bg-gradient-to-r from-netflix-red/20 to-netflix-red/10 text-netflix-red border-l-4 border-netflix-red shadow-lg shadow-netflix-red/20"
-                      : "text-white/80 hover:bg-white/15 hover:text-white hover:shadow-lg hover:shadow-white/5"
+                      ? "bg-black/40 text-red-500"
+                      : "text-white/80 hover:bg-black/20 hover:text-white"
                   }`}
               >
-                <link.icon size={18} className="group-hover:scale-110 transition-transform duration-200" />
-                <span className="group-hover:translate-x-0.5 transition-transform duration-200">{link.name}</span>
+                <link.icon size={18} className={`transition-all duration-200 ${isActive ? 'text-red-500' : ''}`} />
+                <span className="transition-all duration-200">{link.name}</span>
               </div>
             </Link>
           );
@@ -107,14 +104,14 @@ const SideBar: React.FC<SideBarProps> = ({ sideBarOpen, setSideBarOpen }) => {
               }}
             >
               <div
-                className={`px-4 py-2.5 text-sm rounded-lg transition-all duration-300 ease-out transform group-hover:scale-[1.02] group-hover:translate-x-1
+                className={`px-4 py-2.5 text-sm rounded transition-all duration-300 ease-out
                   ${
                     isActive
-                      ? "bg-gradient-to-r from-netflix-red/20 to-netflix-red/10 text-netflix-red border-l-4 border-netflix-red shadow-lg shadow-netflix-red/20"
-                      : "text-white/80 hover:bg-white/15 hover:text-white hover:shadow-lg hover:shadow-white/5"
+                      ? "bg-black/40 text-red-500"
+                      : "text-white/80 hover:bg-black/20 hover:text-white"
                   }`}
               >
-                <span className="group-hover:translate-x-1 inline-block transition-transform duration-300 font-medium">
+                <span className="transition-all duration-200 font-medium">
                   {genre.name}
                 </span>
               </div>

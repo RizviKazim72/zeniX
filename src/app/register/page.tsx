@@ -1,6 +1,5 @@
 /**
  * Register Page
- * Beautiful Netflix-style registration form
  */
 
 "use client";

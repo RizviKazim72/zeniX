@@ -68,7 +68,7 @@ export default function Skeleton({
 
 // Pre-built skeleton components for common use cases
 export const HeroSkeleton = () => (
-  <div className="w-full h-screen bg-slate-800 relative overflow-hidden">
+  <div className="w-full aspect-[21/9] bg-slate-800 relative overflow-hidden">
     <div className="absolute inset-0 bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 animate-pulse" />
     <div className="absolute inset-0 flex flex-col justify-center px-4 sm:px-6 lg:px-16">
       <div className="max-w-2xl space-y-6">
@@ -76,61 +76,38 @@ export const HeroSkeleton = () => (
         <div className="flex items-center space-x-4">
           <Skeleton variant="text" width={80} height={20} />
           <Skeleton variant="text" width={100} height={20} />
-          <Skeleton variant="text" width={60} height={20} />
         </div>
-        <Skeleton variant="text" lines={4} />
-        <div className="flex space-x-4">
-          <Skeleton variant="rectangular" width={150} height={45} className="rounded-lg" />
-          <Skeleton variant="rectangular" width={120} height={45} className="rounded-lg" />
-        </div>
+        <Skeleton variant="text" lines={3} />
       </div>
     </div>
   </div>
 );
 
-export const CardSkeleton = () => (
-  <div className="flex-shrink-0 space-y-3">
-    <Skeleton variant="card" width={200} height={300} />
-    <Skeleton variant="text" width={180} height={16} />
-    <Skeleton variant="text" width={120} height={14} />
-  </div>
-);
-
-export const SliderSkeleton = ({ title }: { title?: string }) => (
-  <div className="px-4 sm:px-6 lg:px-8 space-y-4">
-    {title ? (
-      <h2 className="text-xl font-bold text-white">{title}</h2>
-    ) : (
-      <Skeleton variant="text" width={200} height={24} />
-    )}
-    <div className="flex gap-4 overflow-hidden">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <CardSkeleton key={i} />
-      ))}
+export const MediaCardSkeleton = () => (
+  <div className="rounded-lg overflow-hidden bg-slate-800">
+    <div className="aspect-[2/3] bg-slate-700 animate-pulse" />
+    <div className="p-4 space-y-2">
+      <Skeleton variant="text" className="w-3/4" />
+      <Skeleton variant="text" className="w-1/2" />
     </div>
   </div>
 );
 
-export const ProfileSkeleton = () => (
-  <div className="flex items-center space-x-4 p-4">
-    <Skeleton variant="circular" width={60} height={60} />
-    <div className="space-y-2">
-      <Skeleton variant="text" width={150} height={20} />
-      <Skeleton variant="text" width={200} height={16} />
-    </div>
-  </div>
-);
-
-export const SearchResultSkeleton = () => (
-  <div className="flex space-x-4 p-4 border-b border-slate-700">
-    <Skeleton variant="card" width={80} height={120} />
-    <div className="flex-1 space-y-3">
-      <Skeleton variant="text" width="60%" height={20} />
-      <Skeleton variant="text" lines={3} />
-      <div className="flex space-x-2">
-        <Skeleton variant="text" width={60} height={16} />
-        <Skeleton variant="text" width={80} height={16} />
+export const ReviewSkeleton = () => (
+  <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-lg p-4">
+    <div className="flex items-center space-x-3 mb-3">
+      <Skeleton variant="circular" width={40} height={40} />
+      <div className="flex-1">
+        <Skeleton variant="text" width="40%" />
+        <div className="flex items-center space-x-2 mt-1">
+          <Skeleton variant="text" width={60} height={12} />
+        </div>
       </div>
+    </div>
+    <Skeleton variant="text" lines={3} />
+    <div className="flex justify-between mt-3">
+      <Skeleton variant="text" width={80} height={20} />
+      <Skeleton variant="text" width={60} height={20} />
     </div>
   </div>
 );

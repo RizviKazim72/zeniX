@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { TMDBService } from '@/services';
+import { TMDBService } from '@/services/tmdb-api';
 import type { Movie, TVShow, ApiResponse } from '@/types';
 import { getGenreConfig, type GenreConfig } from '@/constants/genres';
 

@@ -1,6 +1,5 @@
 /**
  * Utility functions barrel export
- * Central access point for all utility functions
  */
 
 // Image utilities
@@ -46,9 +45,4 @@ export {
 export { default as useOutsideClick } from "./useOutsideClick";
 
 // Type exports for utilities
-export type {
-  ImageSizeType,
-  PosterSize,
-  BackdropSize,
-  ProfileSize
-} from "./imageUtils";
+export type { ImageSizeType, PosterSize, BackdropSize } from "./imageUtils";

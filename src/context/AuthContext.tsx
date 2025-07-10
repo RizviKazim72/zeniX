@@ -23,6 +23,9 @@ export interface UserMediaItem {
   release_date?: string;
   first_air_date?: string;
   overview?: string;
+  progress?: number; // Viewing progress percentage
+  episodeNumber?: number; // For TV shows
+  seasonNumber?: number; // For TV shows
   genres?: string[];
   addedAt?: string;
   watchedAt?: string;
